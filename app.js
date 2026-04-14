@@ -10,6 +10,7 @@ function navigateTo(page, id) {
     case 'thinker':    renderThinker(id); break;
     case 'books':      renderBooks(); break;
     case 'book':       renderBook(id); break;
+    case 'bible':      renderBible(); break;
     case 'about':      renderAbout(); break;
     default:           renderHome();
   }
@@ -788,6 +789,240 @@ function closeThinkerPanel() {
   if (overlay._keyHandler) document.removeEventListener('keydown', overlay._keyHandler);
   overlay.classList.remove('open');
   setTimeout(() => overlay.remove(), 250);
+}
+
+// ── Bible ───────────────────────────────────────────────────────────────────
+const BIBLE_TRANSLATIONS = {
+  kjv: { id: 'kjv', label: 'KJV (King James Version)', note: '' },
+  niv: { id: 'web', label: 'NIV (New International Version)', note: 'NIV is copyright-protected; displaying the World English Bible (modern English) as a free stand-in.' },
+  esv: { id: 'web', label: 'ESV (English Standard Version)', note: 'ESV is copyright-protected; displaying the World English Bible (modern English) as a free stand-in.' }
+};
+let BIBLE_STATE = { translation: 'kjv' };
+
+function renderBible() {
+  const hm = renderBibleHeatmap();
+  setContent(`
+    <section class="bible-page">
+      <div class="bible-header">
+        <h1>The Bible</h1>
+        <p class="section-subtitle">Read, search, and study the Scriptures alongside the thinkers who interpret them.</p>
+      </div>
+
+      <div class="bible-heatmap-wrap">
+        <div class="bible-heatmap-header">
+          <h2>Apologist Citation Heatmap</h2>
+          <p class="hm-caption">Relative frequency with which each book of the Bible is cited across major apologetics works. Hover a cell for details.</p>
+        </div>
+        ${hm}
+      </div>
+
+      <div class="bible-controls">
+        <div class="bible-translation-row">
+          <label for="bible-trans">Translation:</label>
+          <select id="bible-trans" onchange="bibleSetTranslation(this.value)">
+            <option value="kjv" ${BIBLE_STATE.translation==='kjv'?'selected':''}>KJV</option>
+            <option value="niv" ${BIBLE_STATE.translation==='niv'?'selected':''}>NIV</option>
+            <option value="esv" ${BIBLE_STATE.translation==='esv'?'selected':''}>ESV</option>
+          </select>
+          <span id="bible-trans-note" class="bible-note">${BIBLE_TRANSLATIONS[BIBLE_STATE.translation].note}</span>
+        </div>
+
+        <div class="bible-search-row">
+          <input id="bible-search" type="text" placeholder="Search a reference — e.g. John 3:16, Romans 8, Psalm 23:1-6" onkeydown="if(event.key==='Enter')bibleLookup()">
+          <button class="btn-primary" onclick="bibleLookup()">Look Up</button>
+        </div>
+
+        <details class="bible-advanced">
+          <summary>Advanced Search — find a verse when you only remember part of it</summary>
+          <div class="bible-adv-body">
+            <div class="bible-adv-grid">
+              <label>Words / phrase I remember
+                <input id="adv-phrase" type="text" placeholder="e.g. all things work together">
+              </label>
+              <label>Testament
+                <select id="adv-testament">
+                  <option value="">Any</option>
+                  <option value="OT">Old Testament</option>
+                  <option value="NT">New Testament</option>
+                </select>
+              </label>
+              <label>Book (optional)
+                <select id="adv-book">
+                  <option value="">Any</option>
+                  ${BIBLE_BOOKS.map(b=>`<option value="${b.name}">${b.name}</option>`).join('')}
+                </select>
+              </label>
+              <label>Match mode
+                <select id="adv-mode">
+                  <option value="fuzzy">Fuzzy (any of these words)</option>
+                  <option value="phrase">Exact phrase</option>
+                  <option value="all">All words (any order)</option>
+                </select>
+              </label>
+            </div>
+            <button class="btn-primary" onclick="bibleAdvancedSearch()">Search Scripture</button>
+            <p class="bible-note">Fuzzy search pulls an entire chapter first, then ranks verses that best match your remembered fragment.</p>
+          </div>
+        </details>
+      </div>
+
+      <div id="bible-results" class="bible-results">
+        <div class="bible-placeholder">
+          <p>Try: <a href="#" onclick="bibleQuick('John 3:16')">John 3:16</a> · <a href="#" onclick="bibleQuick('Romans 8')">Romans 8</a> · <a href="#" onclick="bibleQuick('Psalm 23')">Psalm 23</a> · <a href="#" onclick="bibleQuick('Isaiah 53')">Isaiah 53</a></p>
+        </div>
+      </div>
+    </section>
+  `);
+}
+
+function renderBibleHeatmap() {
+  const ot = BIBLE_BOOKS.filter(b=>b.testament==='OT');
+  const nt = BIBLE_BOOKS.filter(b=>b.testament==='NT');
+  const cell = b => {
+    const intensity = b.usage / 100;
+    const bg = `rgba(201, 162, 39, ${0.08 + intensity*0.85})`;
+    return `<div class="hm-cell" style="background:${bg}" title="${b.name} — citation weight ${b.usage}/100" onclick="bibleQuick('${b.name} 1')">
+      <span class="hm-abbr">${b.abbr}</span>
+      <span class="hm-val">${b.usage}</span>
+    </div>`;
+  };
+  return `
+    <div class="hm-legend">
+      <span>Less cited</span>
+      <div class="hm-gradient"></div>
+      <span>Most cited</span>
+    </div>
+    <div class="hm-row-label">Old Testament</div>
+    <div class="hm-grid">${ot.map(cell).join('')}</div>
+    <div class="hm-row-label">New Testament</div>
+    <div class="hm-grid">${nt.map(cell).join('')}</div>
+  `;
+}
+
+function bibleSetTranslation(val) {
+  BIBLE_STATE.translation = val;
+  const note = document.getElementById('bible-trans-note');
+  if (note) note.textContent = BIBLE_TRANSLATIONS[val].note;
+}
+
+function bibleQuick(ref) {
+  const input = document.getElementById('bible-search');
+  if (input) input.value = ref;
+  bibleLookup();
+}
+
+async function bibleLookup() {
+  const q = (document.getElementById('bible-search').value || '').trim();
+  if (!q) return;
+  const results = document.getElementById('bible-results');
+  results.innerHTML = `<div class="bible-loading">Loading ${escapeHtml(q)}…</div>`;
+  const trans = BIBLE_TRANSLATIONS[BIBLE_STATE.translation];
+  try {
+    const url = `https://bible-api.com/${encodeURIComponent(q)}?translation=${trans.id}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Not found');
+    const data = await res.json();
+    results.innerHTML = renderBiblePassage(data, q);
+  } catch (e) {
+    results.innerHTML = `<div class="bible-error">Could not find "<strong>${escapeHtml(q)}</strong>". Try a reference like <em>John 3:16</em> or <em>Romans 8:28</em>.</div>`;
+  }
+}
+
+function renderBiblePassage(data, q) {
+  const trans = BIBLE_TRANSLATIONS[BIBLE_STATE.translation];
+  const verses = (data.verses || []).map(v => `
+    <div class="bible-verse">
+      <span class="bible-vnum">${v.chapter}:${v.verse}</span>
+      <span class="bible-vtext">${escapeHtml(v.text.trim())}</span>
+    </div>
+  `).join('');
+  return `
+    <div class="bible-passage">
+      <div class="bible-passage-head">
+        <h3>${escapeHtml(data.reference || q)}</h3>
+        <span class="bible-trans-badge">${trans.label}</span>
+      </div>
+      ${verses || `<p>${escapeHtml(data.text || '')}</p>`}
+    </div>
+  `;
+}
+
+async function bibleAdvancedSearch() {
+  const phrase = (document.getElementById('adv-phrase').value || '').trim();
+  const testament = document.getElementById('adv-testament').value;
+  const bookFilter = document.getElementById('adv-book').value;
+  const mode = document.getElementById('adv-mode').value;
+  if (!phrase) return;
+  const results = document.getElementById('bible-results');
+  const trans = BIBLE_TRANSLATIONS[BIBLE_STATE.translation];
+
+  let pool = BIBLE_BOOKS;
+  if (testament) pool = pool.filter(b=>b.testament===testament);
+  if (bookFilter) pool = pool.filter(b=>b.name===bookFilter);
+  pool = [...pool].sort((a,b)=>b.usage-a.usage).slice(0, bookFilter ? pool.length : 8);
+
+  results.innerHTML = `<div class="bible-loading">Searching ${pool.length} book(s) for "<em>${escapeHtml(phrase)}</em>"… this may take a few seconds.</div>`;
+
+  const chapterTargets = [];
+  pool.forEach(b => {
+    const maxCh = bookFilter ? b.chapters : Math.min(b.chapters, 5);
+    for (let c=1; c<=maxCh; c++) chapterTargets.push({book:b.name, chapter:c});
+  });
+
+  const matches = [];
+  const words = phrase.toLowerCase().split(/\s+/).filter(Boolean);
+  const batchSize = 6;
+  for (let i=0; i<chapterTargets.length; i+=batchSize) {
+    const batch = chapterTargets.slice(i, i+batchSize);
+    const datas = await Promise.all(batch.map(async t => {
+      try {
+        const r = await fetch(`https://bible-api.com/${encodeURIComponent(t.book+' '+t.chapter)}?translation=${trans.id}`);
+        if (!r.ok) return null;
+        return { t, data: await r.json() };
+      } catch { return null; }
+    }));
+    datas.forEach(entry => {
+      if (!entry || !entry.data.verses) return;
+      entry.data.verses.forEach(v => {
+        const text = v.text.toLowerCase();
+        let score = 0;
+        if (mode === 'phrase') {
+          if (text.includes(phrase.toLowerCase())) score = 100;
+        } else if (mode === 'all') {
+          if (words.every(w => text.includes(w))) score = 80 + words.length;
+        } else {
+          score = words.reduce((s,w)=> s + (text.includes(w) ? 1 : 0), 0);
+        }
+        if (score > 0) matches.push({ ref:`${entry.t.book} ${v.chapter}:${v.verse}`, text:v.text.trim(), score });
+      });
+    });
+    if (matches.length > 40) break;
+  }
+
+  matches.sort((a,b)=>b.score-a.score);
+  const top = matches.slice(0, 30);
+  if (!top.length) {
+    results.innerHTML = `<div class="bible-error">No verses matched "<strong>${escapeHtml(phrase)}</strong>". Try fewer or different words, or widen the scope.</div>`;
+    return;
+  }
+  results.innerHTML = `
+    <div class="bible-passage">
+      <div class="bible-passage-head">
+        <h3>${top.length} match${top.length===1?'':'es'} for "${escapeHtml(phrase)}"</h3>
+        <span class="bible-trans-badge">${trans.label}</span>
+      </div>
+      ${top.map(m=>`
+        <div class="bible-verse bible-verse-match" onclick="bibleQuick('${m.ref}')">
+          <span class="bible-vnum">${m.ref}</span>
+          <span class="bible-vtext">${escapeHtml(m.text)}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 // ── Init ────────────────────────────────────────────────────────────────────
