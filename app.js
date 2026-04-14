@@ -1,0 +1,794 @@
+// ── Router ──────────────────────────────────────────────────────────────────
+function navigateTo(page, id) {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  switch (page) {
+    case 'home':       renderHome(); break;
+    case 'courses':    renderCourses(); break;
+    case 'course':     renderCourse(id); break;
+    case 'lesson':     renderLesson(id.courseId, id.lessonIdx); break;
+    case 'thinkers':   renderThinkers(); break;
+    case 'thinker':    renderThinker(id); break;
+    case 'books':      renderBooks(); break;
+    case 'book':       renderBook(id); break;
+    case 'about':      renderAbout(); break;
+    default:           renderHome();
+  }
+}
+
+function setContent(html) {
+  document.getElementById('app').innerHTML = html;
+}
+
+// ── Home ────────────────────────────────────────────────────────────────────
+function renderHome() {
+  setContent(`
+    <section class="hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>Apologetics Academy</h1>
+        <p class="hero-sub">Learn to give a reason for the hope that is in you.</p>
+        <p class="hero-verse">"But in your hearts revere Christ as Lord. Always be prepared to give an answer to everyone who asks you to give the reason for the hope that you have." &mdash; 1 Peter 3:15</p>
+        <button class="btn-primary" onclick="navigateTo('courses')">Explore Courses</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">What Is Apologetics?</h2>
+      <div class="intro-text">
+        <p>Christian apologetics is the intellectual discipline of defending the truth of the Christian faith through reason, evidence, and argument. From the Greek <em>apologia</em> (a reasoned defense), it has been practiced since the earliest days of the Church.</p>
+        <p>Throughout history, great minds have developed distinct methods of making the case for Christianity. This academy will guide you through the major schools of apologetic thought, learning from the thinkers who shaped each tradition.</p>
+      </div>
+    </section>
+
+    <section class="section bg-alt">
+      <h2 class="section-title">Choose Your Path</h2>
+      <div class="course-grid">
+        ${COURSES.map(c => `
+          <div class="course-card" style="border-top: 4px solid ${c.color}" onclick="navigateTo('course','${c.id}')">
+            <div class="course-card-icon">${c.icon}</div>
+            <h3>${c.title}</h3>
+            <p class="course-card-sub">${c.subtitle}</p>
+            <p class="course-card-count">${c.thinkerIds.length} thinkers &middot; ${c.lessons.length} lessons</p>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Featured Thinkers</h2>
+      <div class="thinker-row">
+        ${['aquinas','augustine','lewis','pascal','plantinga','lennox','keller','montgomery','menuge','bahnsen'].map(id => {
+          const t = THINKERS[id];
+          return `
+            <div class="thinker-chip" onclick="navigateTo('thinker','${id}')">
+              <div class="thinker-chip-avatar">${t.name.charAt(0)}</div>
+              <div>
+                <strong>${t.name}</strong>
+                <span>${t.years}</span>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    </section>
+  `);
+}
+
+// ── Courses list ────────────────────────────────────────────────────────────
+function renderCourses() {
+  setContent(`
+    <section class="section page-top">
+      <h1 class="page-title">Courses</h1>
+      <p class="page-desc">Each course follows a distinct apologetic method. Choose one to explore its lessons and the thinkers who shaped it.</p>
+      <div class="course-list">
+        ${COURSES.map(c => `
+          <div class="course-list-item" onclick="navigateTo('course','${c.id}')">
+            <div class="course-list-icon" style="background:${c.color}">${c.icon}</div>
+            <div class="course-list-body">
+              <h2>${c.title}</h2>
+              <p class="course-list-sub">${c.subtitle}</p>
+              <p>${c.description.substring(0, 180)}...</p>
+              <div class="course-list-meta">
+                <span>${c.lessons.length} lessons</span>
+                <span>${c.thinkerIds.length} thinkers</span>
+              </div>
+            </div>
+            <div class="course-list-arrow">&rarr;</div>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+  `);
+}
+
+// ── Single course ───────────────────────────────────────────────────────────
+function renderCourse(courseId) {
+  const c = COURSES.find(x => x.id === courseId);
+  if (!c) return renderCourses();
+  setContent(`
+    <section class="course-hero" style="background:${c.color}">
+      <div class="course-hero-inner">
+        <div class="course-hero-icon">${c.icon}</div>
+        <h1>${c.title}</h1>
+        <p>${c.subtitle}</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="course-detail-grid">
+        <div class="course-detail-main">
+          <h2>Overview</h2>
+          <p>${c.description}</p>
+          <div class="method-box">
+            <h3>Method</h3>
+            <p>${c.method}</p>
+          </div>
+
+          <h2>Lessons</h2>
+          <div class="lesson-list">
+            ${c.lessons.map((l, i) => `
+              <div class="lesson-card" onclick="navigateTo('lesson',{courseId:'${c.id}',lessonIdx:${i}})">
+                <div class="lesson-num">${i + 1}</div>
+                <div class="lesson-card-body">
+                  <h3>${l.title}</h3>
+                  <p>${l.description.substring(0, 120)}...</p>
+                  <span class="lesson-thinker-tag" style="background:${c.color}20;color:${c.color}">
+                    ${THINKERS[l.thinker].name}
+                  </span>
+                </div>
+                <div class="lesson-arrow">&rarr;</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <aside class="course-detail-side">
+          <h3>Key Thinkers</h3>
+          <div class="side-thinkers">
+            ${c.thinkerIds.map(id => {
+              const t = THINKERS[id];
+              return `
+                <div class="side-thinker" onclick="showThinkerPanel('${id}', '${c.id}')">
+                  <div class="side-thinker-avatar">${t.name.charAt(0)}</div>
+                  <div>
+                    <strong>${t.name}</strong><br>
+                    <small>${t.years}</small>
+                  </div>
+                </div>`;
+            }).join('')}
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="back-link">
+      <a href="#" onclick="navigateTo('courses')">&larr; All Courses</a>
+    </div>
+  `);
+}
+
+// ── Single lesson ───────────────────────────────────────────────────────────
+function renderLesson(courseId, lessonIdx) {
+  const c = COURSES.find(x => x.id === courseId);
+  if (!c) return renderCourses();
+  const l = c.lessons[lessonIdx];
+  const t = THINKERS[l.thinker];
+
+  const prevLesson = lessonIdx > 0 ? lessonIdx - 1 : null;
+  const nextLesson = lessonIdx < c.lessons.length - 1 ? lessonIdx + 1 : null;
+
+  // Find related books for this lesson's thinker
+  const lessonBooks = typeof BOOKS !== 'undefined' ? BOOKS.filter(b => b.thinkerId === l.thinker) : [];
+
+  setContent(`
+    <section class="section page-top">
+      <div class="breadcrumb">
+        <a href="#" onclick="navigateTo('courses')">Courses</a> &rsaquo;
+        <a href="#" onclick="navigateTo('course','${c.id}')">${c.title}</a> &rsaquo;
+        <span>Lesson ${lessonIdx + 1}</span>
+      </div>
+
+      <div class="lesson-detail">
+        <div class="lesson-detail-header" style="border-left: 4px solid ${c.color}">
+          <span class="lesson-badge" style="background:${c.color}">Lesson ${lessonIdx + 1}</span>
+          <h1>${l.title}</h1>
+          <p class="lesson-desc">${l.description}</p>
+        </div>
+
+        <div class="lesson-thinker-box" onclick="showThinkerPanel('${l.thinker}', '${c.id}')">
+          <div class="lesson-thinker-avatar" style="background:${c.color}">${t.name.charAt(0)}</div>
+          <div>
+            <h3>Featured Thinker: ${t.name}</h3>
+            <p>${t.years}</p>
+            <p>${t.bio.substring(0, 150)}...</p>
+          </div>
+        </div>
+
+        ${l.keyQuote ? `
+          <blockquote class="lesson-quote" style="border-left-color:${c.color}">
+            <p>"${l.keyQuote}"</p>
+            <cite>&mdash; ${l.quoteSource}</cite>
+          </blockquote>
+        ` : ''}
+
+        <h2>Topics Covered</h2>
+        <div class="topic-list">
+          ${l.topics.map((topic, i) => `
+            <div class="topic-item">
+              <div class="topic-num">${i + 1}</div>
+              <p>${topic}</p>
+            </div>
+          `).join('')}
+        </div>
+
+        <h2>Core Ideas</h2>
+        <div class="ideas-grid">
+          ${t.keyIdeas.map(idea => `
+            <div class="idea-card">
+              <p>${idea}</p>
+            </div>
+          `).join('')}
+        </div>
+
+        ${l.learningObjectives && l.learningObjectives.length ? `
+          <h2>Learning Objectives</h2>
+          <div class="lesson-context-box" style="border-left-color:${c.color}">
+            <ul class="objectives-list">
+              ${l.learningObjectives.map(o => `<li>${o}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+
+        ${l.exposition ? `
+          <h2>Core Teaching</h2>
+          <div class="lesson-exposition">
+            ${l.exposition.map(para => `<p>${para}</p>`).join('')}
+          </div>
+        ` : ''}
+
+        ${l.scripture && l.scripture.length ? `
+          <h2>Scripture & Exegesis</h2>
+          <div class="reading-list">
+            ${l.scripture.map(s => `
+              <div class="reading-item">
+                <div class="reading-icon">&#x271D;</div>
+                <div>
+                  <strong>${s.reference}</strong>
+                  <p><em>"${s.text}"</em></p>
+                  <p>${s.exegesis}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${l.workedExample ? `
+          <h2>Worked Example</h2>
+          <div class="lesson-context-box" style="border-left-color:${c.color}">
+            <p>${l.workedExample}</p>
+          </div>
+        ` : ''}
+
+        ${l.historicalContext ? `
+          <h2>Historical Context</h2>
+          <div class="lesson-context-box" style="border-left-color:${c.color}">
+            <p>${l.historicalContext}</p>
+          </div>
+        ` : ''}
+
+        ${l.commonObjections && l.commonObjections.length ? `
+          <h2>Common Objections & Responses</h2>
+          <div class="objections-list">
+            ${l.commonObjections.map(obj => `
+              <details class="objection-item">
+                <summary><strong>Objection:</strong> ${obj.objection}</summary>
+                <div class="objection-response">
+                  <strong>Response:</strong> ${obj.response}
+                </div>
+              </details>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${l.discussionQuestions && l.discussionQuestions.length ? `
+          <h2>Discussion Questions</h2>
+          <div class="discussion-questions">
+            ${l.discussionQuestions.map((q, i) => `
+              <div class="dq-item">
+                <span class="dq-num">${i + 1}</span>
+                <p>${q}</p>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${l.quiz && l.quiz.length ? `
+          <h2>Self-Check Quiz</h2>
+          <div class="objections-list">
+            ${l.quiz.map((q, i) => `
+              <details class="objection-item">
+                <summary><strong>Q${i + 1}.</strong> ${q.question}</summary>
+                <div class="objection-response">
+                  <strong>Answer:</strong> ${q.answer}
+                </div>
+              </details>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${l.readingList && l.readingList.length ? `
+          <h2>Reading Assignments</h2>
+          <div class="reading-list">
+            ${l.readingList.map(r => {
+              const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+              const match = BOOKS.find(b => norm(b.title) === norm(r.title));
+              const body = r.detail || [r.author ? `<em>${r.author}</em>` : '', r.note || ''].filter(Boolean).join(' &mdash; ');
+              if (match) {
+                return `
+                  <div class="reading-item reading-item-link" onclick="navigateTo('book','${match.id}')" role="link" tabindex="0">
+                    <div class="reading-icon">&#x1F4D6;</div>
+                    <div>
+                      <strong>${r.title}</strong> <span class="reading-badge">In Library &rsaquo;</span>
+                      <p>${body}</p>
+                    </div>
+                  </div>
+                `;
+              }
+              const query = encodeURIComponent(`${r.title} ${r.author || ''}`.trim());
+              const url = `https://www.google.com/search?tbm=bks&q=${query}`;
+              return `
+                <a class="reading-item reading-item-link" href="${url}" target="_blank" rel="noopener">
+                  <div class="reading-icon">&#x1F4D6;</div>
+                  <div>
+                    <strong>${r.title}</strong> <span class="reading-badge reading-badge-ext">Find a copy &#x2197;</span>
+                    <p>${body}</p>
+                  </div>
+                </a>
+              `;
+            }).join('')}
+          </div>
+        ` : ''}
+
+        ${lessonBooks.length ? `
+          <h2>Books for Further Study</h2>
+          <div class="lesson-books-row">
+            ${lessonBooks.slice(0, 4).map(b => `
+              <div class="lesson-book-card" onclick="navigateTo('book','${b.id}')">
+                <div class="lesson-book-cover">
+                  ${b.cover ? `<img src="${b.cover}" alt="${b.title}" onerror="this.parentElement.innerHTML='<span>${b.title.charAt(0)}</span>'" />` : `<span>${b.title.charAt(0)}</span>`}
+                </div>
+                <strong>${b.title}</strong>
+                <small>${b.year}</small>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        <div class="lesson-nav">
+          ${prevLesson !== null
+            ? `<button class="btn-secondary" onclick="navigateTo('lesson',{courseId:'${c.id}',lessonIdx:${prevLesson}})">&larr; Previous Lesson</button>`
+            : `<span></span>`}
+          ${nextLesson !== null
+            ? `<button class="btn-primary" onclick="navigateTo('lesson',{courseId:'${c.id}',lessonIdx:${nextLesson}})">Next Lesson &rarr;</button>`
+            : `<button class="btn-primary" onclick="navigateTo('course','${c.id}')">Back to Course</button>`}
+        </div>
+      </div>
+    </section>
+  `);
+}
+
+// ── Thinkers list ───────────────────────────────────────────────────────────
+function renderThinkers() {
+  const ids = Object.keys(THINKERS);
+  setContent(`
+    <section class="section page-top">
+      <h1 class="page-title">Thinkers</h1>
+      <p class="page-desc">The philosophers, theologians, and apologists whose work forms the backbone of this academy.</p>
+      <div class="thinker-grid">
+        ${ids.map(id => {
+          const t = THINKERS[id];
+          const courses = COURSES.filter(c => c.thinkerIds.includes(id));
+          return `
+            <div class="thinker-card" onclick="navigateTo('thinker','${id}')">
+              <div class="thinker-card-avatar">${t.name.charAt(0)}</div>
+              <h3>${t.name}</h3>
+              <p class="thinker-card-years">${t.years}</p>
+              <p class="thinker-card-bio">${t.bio.substring(0, 100)}...</p>
+              <div class="thinker-card-tags">
+                ${courses.map(c => `<span class="tag" style="background:${c.color}20;color:${c.color}">${c.title.replace(' Apologetics','').replace(' & Jurisprudential','')}</span>`).join('')}
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    </section>
+  `);
+}
+
+// ── Single thinker ──────────────────────────────────────────────────────────
+function renderThinker(thinkerId) {
+  const t = THINKERS[thinkerId];
+  if (!t) return renderThinkers();
+  const courses = COURSES.filter(c => c.thinkerIds.includes(thinkerId));
+  const lessons = [];
+  COURSES.forEach(c => {
+    c.lessons.forEach((l, i) => {
+      if (l.thinker === thinkerId) lessons.push({ course: c, lesson: l, idx: i });
+    });
+  });
+
+  setContent(`
+    <section class="section page-top">
+      <div class="breadcrumb">
+        <a href="#" onclick="navigateTo('thinkers')">Thinkers</a> &rsaquo;
+        <span>${t.name}</span>
+      </div>
+
+      <div class="thinker-profile">
+        <div class="thinker-profile-header">
+          <div class="thinker-profile-avatar">${t.name.charAt(0)}</div>
+          <div>
+            <h1>${t.name}</h1>
+            <p class="thinker-profile-years">${t.years}</p>
+          </div>
+        </div>
+
+        <p class="thinker-profile-bio">${t.bio}</p>
+
+        <div class="thinker-detail-grid">
+          <div>
+            <h2>Key Works</h2>
+            <ul class="works-list">
+              ${t.keyWorks.map(w => `<li>${w}</li>`).join('')}
+            </ul>
+          </div>
+          <div>
+            <h2>Core Ideas</h2>
+            <div class="ideas-grid compact">
+              ${t.keyIdeas.map(idea => `
+                <div class="idea-card">
+                  <p>${idea}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <h2>Appears In</h2>
+        <div class="appears-in">
+          ${courses.map(c => `
+            <div class="appears-in-course" onclick="navigateTo('course','${c.id}')" style="border-left:4px solid ${c.color}">
+              <span class="course-hero-icon-sm">${c.icon}</span>
+              <div>
+                <strong>${c.title}</strong>
+                <p>${c.subtitle}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        ${lessons.length ? `
+          <h2>Featured Lessons</h2>
+          <div class="lesson-list">
+            ${lessons.map(({ course: c, lesson: l, idx }) => `
+              <div class="lesson-card" onclick="navigateTo('lesson',{courseId:'${c.id}',lessonIdx:${idx}})">
+                <div class="lesson-num" style="background:${c.color}">${idx + 1}</div>
+                <div class="lesson-card-body">
+                  <h3>${l.title}</h3>
+                  <p>${l.description.substring(0, 100)}...</p>
+                  <span class="lesson-thinker-tag" style="background:${c.color}20;color:${c.color}">${c.title}</span>
+                </div>
+                <div class="lesson-arrow">&rarr;</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+    </section>
+  `);
+}
+
+// ── Books list ──────────────────────────────────────────────────────────────
+function renderBooks() {
+  const categories = [...new Set(BOOKS.map(b => b.category))].sort();
+  const sortedBooks = [...BOOKS].sort((a, b) => a.title.localeCompare(b.title));
+
+  setContent(`
+    <section class="section page-top">
+      <h1 class="page-title">Books</h1>
+      <p class="page-desc">Essential reading in Christian apologetics — from ancient classics to modern masterworks. Each book links to where you can find it online.</p>
+
+      <div class="book-filters">
+        <button class="book-filter active" onclick="filterBooks('all', this)">All</button>
+        ${categories.map(cat => `<button class="book-filter" onclick="filterBooks('${cat.replace(/'/g, "\\'")}', this)">${cat}</button>`).join('')}
+      </div>
+
+      <div class="book-grid" id="bookGrid">
+        ${sortedBooks.map(b => {
+          const t = THINKERS[b.thinkerId];
+          return `
+            <div class="book-card" data-category="${b.category}" onclick="navigateTo('book','${b.id}')">
+              <div class="book-card-cover">
+                ${b.cover ? `<img src="${b.cover}" alt="${b.title}" onerror="this.parentElement.innerHTML='<div class=\\'book-card-placeholder\\'>${b.title.charAt(0)}</div>'" />` : `<div class="book-card-placeholder">${b.title.charAt(0)}</div>`}
+              </div>
+              <div class="book-card-body">
+                <h3>${b.title}</h3>
+                <p class="book-card-author">${b.author}</p>
+                <p class="book-card-year">${b.year}</p>
+                <span class="book-card-cat">${b.category}</span>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    </section>
+  `);
+}
+
+function filterBooks(category, btn) {
+  document.querySelectorAll('.book-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.book-card').forEach(card => {
+    if (category === 'all' || card.dataset.category === category) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+// ── Single book ─────────────────────────────────────────────────────────────
+function renderBook(bookId) {
+  const b = BOOKS.find(x => x.id === bookId);
+  if (!b) return renderBooks();
+  const t = THINKERS[b.thinkerId];
+  const searchQuery = encodeURIComponent(`${b.title} ${b.author}`);
+  const isbnClean = b.isbn.replace(/-/g, '');
+
+  // Other books by same thinker
+  const relatedBooks = BOOKS.filter(x => x.thinkerId === b.thinkerId && x.id !== b.id);
+
+  // Courses this thinker appears in
+  const courses = COURSES.filter(c => c.thinkerIds.includes(b.thinkerId));
+
+  setContent(`
+    <section class="section page-top">
+      <div class="breadcrumb">
+        <a href="#" onclick="navigateTo('books')">Books</a> &rsaquo;
+        <span>${b.title}</span>
+      </div>
+
+      <div class="book-detail">
+        <div class="book-detail-header">
+          <div class="book-detail-cover">
+            ${b.cover ? `<img src="${b.cover}" alt="${b.title}" onerror="this.parentElement.innerHTML='<div class=\\'book-detail-placeholder\\'>${b.title.charAt(0)}</div>'" />` : `<div class="book-detail-placeholder">${b.title.charAt(0)}</div>`}
+          </div>
+          <div class="book-detail-info">
+            <h1>${b.title}</h1>
+            <p class="book-detail-author" onclick="navigateTo('thinker','${b.thinkerId}')">${b.author} (${t.years})</p>
+            <p class="book-detail-year">First published: ${b.year}</p>
+            <span class="book-card-cat">${b.category}</span>
+            <p class="book-detail-desc">${b.description}</p>
+
+            <div class="book-links">
+              <h3>Find This Book</h3>
+              <div class="book-links-grid">
+                <a href="https://www.amazon.com/s?k=${searchQuery}" target="_blank" rel="noopener" class="book-link">
+                  <span class="book-link-icon">&#x1F4E6;</span>
+                  <span>Amazon</span>
+                </a>
+                <a href="https://www.christianbook.com/page/search?search_term=${searchQuery}" target="_blank" rel="noopener" class="book-link">
+                  <span class="book-link-icon">&#x271E;</span>
+                  <span>Christianbook</span>
+                </a>
+                <a href="https://openlibrary.org/isbn/${isbnClean}" target="_blank" rel="noopener" class="book-link">
+                  <span class="book-link-icon">&#x1F4D6;</span>
+                  <span>Open Library</span>
+                </a>
+                <a href="https://www.worldcat.org/search?q=isbn:${isbnClean}" target="_blank" rel="noopener" class="book-link">
+                  <span class="book-link-icon">&#x1F3DB;</span>
+                  <span>WorldCat (Libraries)</span>
+                </a>
+                <a href="https://www.google.com/search?tbm=bks&q=${searchQuery}" target="_blank" rel="noopener" class="book-link">
+                  <span class="book-link-icon">&#x1F50D;</span>
+                  <span>Google Books</span>
+                </a>
+                <a href="https://www.thriftbooks.com/browse/?b.search=${searchQuery}" target="_blank" rel="noopener" class="book-link">
+                  <span class="book-link-icon">&#x1F4B0;</span>
+                  <span>ThriftBooks</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="book-detail-sidebar">
+          <div class="book-about-author" onclick="navigateTo('thinker','${b.thinkerId}')">
+            <div class="side-thinker-avatar">${t.name.charAt(0)}</div>
+            <div>
+              <strong>About the Author</strong><br>
+              <p>${t.bio.substring(0, 180)}...</p>
+            </div>
+          </div>
+
+          ${relatedBooks.length ? `
+            <h3>More by ${t.name}</h3>
+            <div class="related-books">
+              ${relatedBooks.map(rb => `
+                <div class="related-book" onclick="navigateTo('book','${rb.id}')">
+                  <strong>${rb.title}</strong>
+                  <span>${rb.year}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          ${courses.length ? `
+            <h3>Related Courses</h3>
+            <div class="appears-in">
+              ${courses.map(c => `
+                <div class="appears-in-course" onclick="navigateTo('course','${c.id}')" style="border-left:4px solid ${c.color}">
+                  <span class="course-hero-icon-sm">${c.icon}</span>
+                  <div>
+                    <strong>${c.title}</strong>
+                    <p>${c.subtitle}</p>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    </section>
+  `);
+}
+
+// ── About ───────────────────────────────────────────────────────────────────
+function renderAbout() {
+  setContent(`
+    <section class="section page-top">
+      <h1 class="page-title">About</h1>
+      <div class="about-content">
+        <p>Apologetics Academy is a learning platform dedicated to equipping Christians with the intellectual tools to defend and commend their faith. We believe that faith and reason are not enemies but allies — and that the great tradition of Christian thought, stretching from Aristotle and Aquinas through the Reformers to the present day, provides a rich and rigorous foundation for belief.</p>
+
+        <h2>Our Approach</h2>
+        <p>We organize our curriculum around the major <strong>schools of apologetic method</strong>:</p>
+        <ul>
+          <li><strong>Classical Apologetics</strong> — philosophical proofs from first principles</li>
+          <li><strong>Evidential Apologetics</strong> — historical and empirical evidence</li>
+          <li><strong>Presuppositional Apologetics</strong> — worldview analysis and transcendental argument</li>
+          <li><strong>Cumulative Case</strong> — converging lines of evidence and literary imagination</li>
+          <li><strong>Legal-Jurisprudential Apologetics</strong> — courtroom-grade reasoning and human rights</li>
+          <li><strong>Science & Faith</strong> — why science points beyond itself to a Creator</li>
+          <li><strong>Cultural & Existential Apologetics</strong> — engaging the whole person through culture, story, and desire</li>
+          <li><strong>Patristic & Medieval Foundations</strong> — the ancient roots of Christian thought</li>
+        </ul>
+        <p>Within each school, you'll learn from the <strong>key thinkers</strong> who developed and championed that approach. Each lesson focuses on a specific thinker's contribution, guiding you through their arguments, key works, and core ideas.</p>
+
+        <h2>How to Use This Site</h2>
+        <ol>
+          <li>Browse the <strong>Courses</strong> page to find an apologetic method that interests you.</li>
+          <li>Within each course, follow the <strong>lessons</strong> in order — they build on one another.</li>
+          <li>Visit the <strong>Thinkers</strong> page to explore individual philosophers and theologians.</li>
+          <li>Each lesson includes recommended <strong>key works</strong> for deeper study.</li>
+        </ol>
+
+        <blockquote>
+          "The heart cannot rejoice in what the mind rejects." &mdash; John Warwick Montgomery
+        </blockquote>
+      </div>
+    </section>
+  `);
+}
+
+// ── Thinker Panel (inline overlay within courses/lessons) ───────────────────
+function showThinkerPanel(thinkerId, courseId) {
+  // Prevent the click from bubbling to parent navigations
+  if (event) event.stopPropagation();
+
+  const t = THINKERS[thinkerId];
+  if (!t) return;
+
+  // Remove any existing panel
+  closeThinkerPanel();
+
+  const course = courseId ? COURSES.find(x => x.id === courseId) : null;
+  const color = course ? course.color : 'var(--accent)';
+
+  // Lessons this thinker features in (within current course)
+  const thinkerLessons = [];
+  if (course) {
+    course.lessons.forEach((l, i) => {
+      if (l.thinker === thinkerId) thinkerLessons.push({ lesson: l, idx: i });
+    });
+  }
+
+  // Books by this thinker
+  const thinkerBooks = typeof BOOKS !== 'undefined' ? BOOKS.filter(b => b.thinkerId === thinkerId) : [];
+
+  const overlay = document.createElement('div');
+  overlay.className = 'thinker-panel-overlay';
+  overlay.onclick = (e) => { if (e.target === overlay) closeThinkerPanel(); };
+
+  overlay.innerHTML = `
+    <div class="thinker-panel">
+      <button class="thinker-panel-close" onclick="closeThinkerPanel()">&times;</button>
+
+      <div class="thinker-panel-header">
+        <div class="thinker-panel-avatar" style="background:${color}">${t.name.charAt(0)}</div>
+        <div>
+          <h2>${t.name}</h2>
+          <p class="thinker-panel-years">${t.years}</p>
+        </div>
+      </div>
+
+      <p class="thinker-panel-bio">${t.bio}</p>
+
+      <div class="thinker-panel-section">
+        <h3>Core Ideas</h3>
+        <div class="thinker-panel-ideas">
+          ${t.keyIdeas.map(idea => `<div class="thinker-panel-idea" style="border-left-color:${color}"><p>${idea}</p></div>`).join('')}
+        </div>
+      </div>
+
+      <div class="thinker-panel-section">
+        <h3>Key Works</h3>
+        <ul class="works-list">
+          ${t.keyWorks.map(w => `<li>${w}</li>`).join('')}
+        </ul>
+      </div>
+
+      ${thinkerLessons.length ? `
+        <div class="thinker-panel-section">
+          <h3>Lessons in This Course</h3>
+          <div class="thinker-panel-lessons">
+            ${thinkerLessons.map(({ lesson: l, idx }) => `
+              <div class="thinker-panel-lesson" onclick="closeThinkerPanel(); navigateTo('lesson',{courseId:'${courseId}',lessonIdx:${idx}})">
+                <div class="lesson-num" style="background:${color}">${idx + 1}</div>
+                <div>
+                  <strong>${l.title}</strong>
+                  <p>${l.description.substring(0, 80)}...</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+
+      ${thinkerBooks.length ? `
+        <div class="thinker-panel-section">
+          <h3>Books</h3>
+          <div class="thinker-panel-books">
+            ${thinkerBooks.slice(0, 5).map(b => `
+              <div class="thinker-panel-book" onclick="closeThinkerPanel(); navigateTo('book','${b.id}')">
+                <strong>${b.title}</strong>
+                <span>${b.year}</span>
+              </div>
+            `).join('')}
+            ${thinkerBooks.length > 5 ? `<p class="thinker-panel-more">${thinkerBooks.length - 5} more on the Books page</p>` : ''}
+          </div>
+        </div>
+      ` : ''}
+
+      <div class="thinker-panel-footer">
+        <a href="#" class="btn-secondary" onclick="closeThinkerPanel(); navigateTo('thinker','${thinkerId}')">View Full Profile &rarr;</a>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  // Trigger animation on next frame
+  requestAnimationFrame(() => overlay.classList.add('open'));
+
+  // Close on Escape key
+  overlay._keyHandler = (e) => { if (e.key === 'Escape') closeThinkerPanel(); };
+  document.addEventListener('keydown', overlay._keyHandler);
+}
+
+function closeThinkerPanel() {
+  const overlay = document.querySelector('.thinker-panel-overlay');
+  if (!overlay) return;
+  if (overlay._keyHandler) document.removeEventListener('keydown', overlay._keyHandler);
+  overlay.classList.remove('open');
+  setTimeout(() => overlay.remove(), 250);
+}
+
+// ── Init ────────────────────────────────────────────────────────────────────
+navigateTo('home');
