@@ -1016,6 +1016,28 @@ function bibleSetTranslation(val) {
   if (note) note.textContent = BIBLE_TRANSLATIONS[val].note;
 }
 
+function bibleRefSuggest(input) {
+  const wrap = input.parentElement;
+  const box = wrap && wrap.querySelector('.bible-current-ref-suggest');
+  if (!box) return;
+  const raw = (input.value || '').trim();
+  const bookPart = raw.replace(/\s+\d.*$/, '').toLowerCase();
+  if (!bookPart) { box.hidden = true; box.innerHTML = ''; return; }
+  const matches = BIBLE_BOOKS.filter(b => b.name.toLowerCase().startsWith(bookPart)).slice(0, 8);
+  if (!matches.length) { box.hidden = true; box.innerHTML = ''; return; }
+  box.innerHTML = matches.map(b =>
+    `<div class="bible-current-ref-item" onmousedown="event.preventDefault();bibleRefPick('${b.name}')">${escapeHtml(b.name)}</div>`
+  ).join('');
+  box.hidden = false;
+}
+function bibleRefPick(name) {
+  bibleRefHide();
+  bibleQuick(`${name} 1`);
+}
+function bibleRefHide() {
+  document.querySelectorAll('.bible-current-ref-suggest').forEach(el => { el.hidden = true; el.innerHTML = ''; });
+}
+
 function bibleQuick(ref) {
   const input = document.getElementById('bible-search');
   if (input) input.value = ref;
@@ -1100,7 +1122,10 @@ function renderBiblePassage(data, q) {
         <span class="bible-nav-label">Prev</span>
       </button>
       <div class="bible-passage">
-        <input type="text" class="bible-current-ref" value="${escapeHtml((BIBLE_STATE.currentBook || '') + (BIBLE_STATE.currentChapter ? ' ' + BIBLE_STATE.currentChapter : ''))}" aria-label="Current book and chapter — edit and press Enter to jump" placeholder="e.g. John 3" onkeydown="if(event.key==='Enter'){event.preventDefault();bibleQuick(this.value.trim());}" />
+        <div class="bible-current-ref-wrap">
+          <input type="text" class="bible-current-ref" value="${escapeHtml((BIBLE_STATE.currentBook || '') + (BIBLE_STATE.currentChapter ? ' ' + BIBLE_STATE.currentChapter : ''))}" aria-label="Current book and chapter — edit and press Enter to jump" placeholder="e.g. John 3" autocomplete="off" oninput="bibleRefSuggest(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();bibleRefHide();bibleQuick(this.value.trim());}" onblur="setTimeout(bibleRefHide, 150)" onfocus="bibleRefSuggest(this)" />
+          <div class="bible-current-ref-suggest" hidden></div>
+        </div>
         <div class="bible-passage-head">
           <h3>${escapeHtml(data.reference || q)}</h3>
           <span class="bible-trans-badge">${trans.label}</span>

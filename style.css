@@ -1052,6 +1052,18 @@ footer {
   padding: 8px 12px; margin-bottom: 12px;
 }
 .bible-current-ref:focus { outline: 2px solid #c9a94a; background: #fff; }
+.bible-current-ref-wrap { position: relative; }
+.bible-current-ref-suggest {
+  position: absolute; top: calc(100% - 8px); left: 0; right: 0; z-index: 20;
+  background: #fff; border: 1px solid #e7e1d2; border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08); max-height: 240px; overflow-y: auto;
+}
+.bible-current-ref-item {
+  padding: 8px 12px; font-family: 'Cinzel', serif; color: #3a2f15; cursor: pointer;
+  border-bottom: 1px solid #f3ead1;
+}
+.bible-current-ref-item:last-child { border-bottom: none; }
+.bible-current-ref-item:hover { background: #fbf8f1; color: #8a6d1f; }
 .bible-passage-head {
   display: flex; justify-content: space-between; align-items: baseline;
   margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee6d2;
