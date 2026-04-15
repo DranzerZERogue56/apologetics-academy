@@ -1034,6 +1034,16 @@ function bibleRefPick(name) {
   bibleRefHide();
   bibleQuick(`${name} 1`);
 }
+function bibleRefSubmit(raw) {
+  const val = (raw || '').trim();
+  if (!val) return;
+  const hasNumber = /\d/.test(val);
+  const match = BIBLE_BOOKS.find(b => b.name.toLowerCase() === val.toLowerCase());
+  if (match && !hasNumber) { bibleQuick(`${match.name} 1`); return; }
+  const prefix = BIBLE_BOOKS.find(b => b.name.toLowerCase().startsWith(val.toLowerCase()));
+  if (prefix && !hasNumber) { bibleQuick(`${prefix.name} 1`); return; }
+  bibleQuick(val);
+}
 function bibleRefHide() {
   document.querySelectorAll('.bible-current-ref-suggest').forEach(el => { el.hidden = true; el.innerHTML = ''; });
 }
@@ -1123,7 +1133,7 @@ function renderBiblePassage(data, q) {
       </button>
       <div class="bible-passage">
         <div class="bible-current-ref-wrap">
-          <input type="text" class="bible-current-ref" value="${escapeHtml((BIBLE_STATE.currentBook || '') + (BIBLE_STATE.currentChapter ? ' ' + BIBLE_STATE.currentChapter : ''))}" aria-label="Current book and chapter — edit and press Enter to jump" placeholder="e.g. John 3" autocomplete="off" oninput="bibleRefSuggest(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();bibleRefHide();bibleQuick(this.value.trim());}" onblur="setTimeout(bibleRefHide, 150)" onfocus="bibleRefSuggest(this)" />
+          <input type="text" class="bible-current-ref" value="${escapeHtml((BIBLE_STATE.currentBook || '') + (BIBLE_STATE.currentChapter ? ' ' + BIBLE_STATE.currentChapter : ''))}" aria-label="Current book and chapter — edit and press Enter to jump" placeholder="e.g. John 3" autocomplete="off" oninput="bibleRefSuggest(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();bibleRefHide();bibleRefSubmit(this.value);}" onblur="setTimeout(bibleRefHide, 150)" onfocus="bibleRefSuggest(this)" />
           <div class="bible-current-ref-suggest" hidden></div>
         </div>
         <div class="bible-passage-head">
