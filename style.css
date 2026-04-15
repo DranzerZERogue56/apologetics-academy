@@ -1045,6 +1045,12 @@ footer {
   .bible-nav-label { display: none; }
 }
 .bible-passage { background: #fff; border: 1px solid #e7e1d2; border-radius: 10px; padding: 24px; }
+.bible-current-ref {
+  display: block; width: 100%; box-sizing: border-box;
+  font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; color: #8a6d1f;
+  background: #fbf8f1; border: 1px solid #e7e1d2; border-radius: 6px;
+  padding: 8px 12px; margin-bottom: 12px; cursor: default;
+}
 .bible-passage-head {
   display: flex; justify-content: space-between; align-items: baseline;
   margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee6d2;
