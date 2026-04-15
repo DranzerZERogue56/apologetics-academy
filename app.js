@@ -797,23 +797,88 @@ const BIBLE_TRANSLATIONS = {
   niv: { id: 'web', label: 'NIV (New International Version)', note: 'NIV is copyright-protected; displaying the World English Bible (modern English) as a free stand-in.' },
   esv: { id: 'web', label: 'ESV (English Standard Version)', note: 'ESV is copyright-protected; displaying the World English Bible (modern English) as a free stand-in.' }
 };
-let BIBLE_STATE = { translation: 'kjv' };
+let BIBLE_STATE = { translation: 'kjv', thinker: 'all', currentBook: null, currentChapter: null };
+
+function parseBibleReference(q) {
+  const s = q.trim();
+  const sorted = [...BIBLE_BOOKS].sort((a, b) => b.name.length - a.name.length);
+  for (const book of sorted) {
+    const re = new RegExp('^' + book.name.replace(/\s+/g, '\\s+') + '\\s*(\\d+)?', 'i');
+    const m = s.match(re);
+    if (m) return { book: book.name, chapter: m[1] ? parseInt(m[1], 10) : 1 };
+  }
+  return null;
+}
+
+// Discrete color buckets — 7 levels
+const HEATMAP_BUCKETS = [
+  { min:  0, max: 10, color: '#f5efe1', label: '0–10' },
+  { min: 11, max: 25, color: '#ecd9a0', label: '11–25' },
+  { min: 26, max: 40, color: '#e0bf5f', label: '26–40' },
+  { min: 41, max: 55, color: '#c9a227', label: '41–55' },
+  { min: 56, max: 70, color: '#9d7d1d', label: '56–70' },
+  { min: 71, max: 85, color: '#6e5613', label: '71–85' },
+  { min: 86, max: 100, color: '#3f3008', label: '86–100' }
+];
+function bucketColor(v) {
+  for (const b of HEATMAP_BUCKETS) if (v >= b.min && v <= b.max) return b.color;
+  return HEATMAP_BUCKETS[0].color;
+}
+
+// Per-apologist emphasis profiles (primary = heavily cited, secondary = moderately)
+const APOLOGIST_EMPHASIS = {
+  aquinas:    { primary: ['Romans','John','Matthew','Hebrews','Psalms','Isaiah','1 Corinthians','Genesis'], secondary: ['Ephesians','Galatians','Proverbs','Exodus','Acts','James'] },
+  lewis:      { primary: ['Matthew','John','Romans','Psalms','Genesis'], secondary: ['1 Corinthians','Ecclesiastes','Isaiah','Hebrews','Revelation'] },
+  craig:      { primary: ['John','Luke','Acts','1 Corinthians','Matthew','Romans'], secondary: ['Genesis','Isaiah','Mark','Daniel'] },
+  habermas:   { primary: ['1 Corinthians','Luke','Matthew','John','Acts','Mark'], secondary: ['Romans','Galatians','Isaiah'] },
+  mcdowell:   { primary: ['Matthew','John','Luke','Acts','1 Corinthians','Isaiah'], secondary: ['Daniel','Psalms','Romans','Genesis'] },
+  vantil:     { primary: ['Romans','John','Genesis','Proverbs','1 Corinthians'], secondary: ['Psalms','Isaiah','Colossians','Ephesians'] },
+  bahnsen:    { primary: ['Deuteronomy','Romans','Proverbs','Matthew','Exodus','Psalms'], secondary: ['Leviticus','Isaiah','John','1 Corinthians'] },
+  plantinga:  { primary: ['Romans','John','Psalms','Isaiah'], secondary: ['Matthew','Genesis','1 Corinthians','Ecclesiastes'] },
+  augustine:  { primary: ['Psalms','Genesis','John','Romans','Matthew'], secondary: ['1 Corinthians','Isaiah','Ephesians','Galatians'] },
+  anselm:     { primary: ['Psalms','Romans','John','Isaiah'], secondary: ['Matthew','Genesis','Hebrews'] },
+  pascal:     { primary: ['Isaiah','Matthew','John','Psalms','Daniel','Romans'], secondary: ['Genesis','Ecclesiastes','Luke','Hebrews'] },
+  paley:      { primary: ['Psalms','Romans','Matthew','John'], secondary: ['Genesis','Isaiah','Job','Acts'] },
+  schaeffer:  { primary: ['Genesis','Romans','John','Ecclesiastes','Isaiah'], secondary: ['Matthew','1 Corinthians','Psalms','Acts','Colossians'] },
+  kreeft:     { primary: ['Matthew','John','Romans','Psalms','Ecclesiastes','1 Corinthians'], secondary: ['Genesis','Luke','Isaiah','Hebrews'] },
+  moreland:   { primary: ['Romans','John','1 Corinthians','Matthew','Acts'], secondary: ['Genesis','Colossians','Luke','Hebrews'] },
+  feser:      { primary: ['Romans','Matthew','John','Psalms','Hebrews'], secondary: ['Genesis','1 Corinthians','Isaiah'] },
+  mcgrath:    { primary: ['Romans','John','Genesis','Matthew','1 Corinthians'], secondary: ['Isaiah','Psalms','Acts','Ephesians'] },
+  lennox:     { primary: ['Genesis','John','Romans','Matthew','Psalms'], secondary: ['1 Corinthians','Daniel','Acts','Isaiah'] },
+  chesterton: { primary: ['Matthew','John','Psalms','Genesis','Luke'], secondary: ['Job','Ecclesiastes','Romans','Isaiah'] },
+  montgomery: { primary: ['Luke','Acts','1 Corinthians','John','Matthew'], secondary: ['Mark','Romans','Galatians'] },
+  menuge:     { primary: ['Romans','John','Genesis','1 Corinthians'], secondary: ['Matthew','Psalms','Acts'] },
+  geisler:    { primary: ['Romans','John','1 Corinthians','Genesis','Matthew','Acts'], secondary: ['Isaiah','Luke','2 Peter','Daniel'] },
+  sproul:     { primary: ['Romans','Isaiah','Genesis','John','Ephesians'], secondary: ['Matthew','Psalms','1 Corinthians','Hebrews'] },
+  frame:      { primary: ['Deuteronomy','Romans','John','Isaiah','Psalms','Exodus'], secondary: ['Matthew','Genesis','1 Corinthians'] },
+  grotius:    { primary: ['Matthew','John','Romans','Acts','Luke'], secondary: ['1 Corinthians','Isaiah','Genesis'] },
+  greenleaf:  { primary: ['Matthew','Mark','Luke','John','Acts'], secondary: ['1 Corinthians','Romans'] },
+  strobel:    { primary: ['Matthew','John','Luke','1 Corinthians','Acts','Mark'], secondary: ['Romans','Isaiah','Daniel'] },
+  wallace:    { primary: ['Matthew','Mark','Luke','John','Acts'], secondary: ['1 Corinthians','Romans','2 Peter'] },
+  keller:     { primary: ['Genesis','Romans','Luke','John','Isaiah','Jonah'], secondary: ['Matthew','Ecclesiastes','Psalms','1 Corinthians'] },
+  groothuis:  { primary: ['Romans','John','1 Corinthians','Matthew','Acts'], secondary: ['Genesis','Psalms','Isaiah'] },
+  turek:      { primary: ['Romans','John','Genesis','Matthew','1 Corinthians'], secondary: ['Acts','Luke','Isaiah'] },
+  horn:       { primary: ['Matthew','1 Corinthians','Acts','John','Romans'], secondary: ['James','Luke','2 Peter'] },
+  aristotle:  { primary: [], secondary: [] }
+};
+
+function getBookUsage(thinkerId, book) {
+  if (thinkerId === 'all') return book.usage;
+  const emph = APOLOGIST_EMPHASIS[thinkerId];
+  if (!emph) return Math.round(book.usage * 0.4);
+  const p = emph.primary.indexOf(book.name);
+  if (p !== -1) return Math.max(72, 96 - p * 3);
+  const s = emph.secondary.indexOf(book.name);
+  if (s !== -1) return Math.max(32, 58 - s * 4);
+  return Math.max(2, Math.round(book.usage * 0.22));
+}
 
 function renderBible() {
-  const hm = renderBibleHeatmap();
   setContent(`
     <section class="bible-page">
       <div class="bible-header">
         <h1>The Bible</h1>
         <p class="section-subtitle">Read, search, and study the Scriptures alongside the thinkers who interpret them.</p>
-      </div>
-
-      <div class="bible-heatmap-wrap">
-        <div class="bible-heatmap-header">
-          <h2>Apologist Citation Heatmap</h2>
-          <p class="hm-caption">Relative frequency with which each book of the Bible is cited across major apologetics works. Hover a cell for details.</p>
-        </div>
-        ${hm}
       </div>
 
       <div class="bible-controls">
@@ -866,6 +931,25 @@ function renderBible() {
         </details>
       </div>
 
+      <div class="bible-heatmap-layout">
+        <div class="bible-heatmap-wrap">
+          <div class="bible-heatmap-header">
+            <h2>Apologist Citation Heatmap</h2>
+            <p class="hm-caption" id="hm-caption">Relative frequency with which each book of the Bible is cited across major apologetics works. Click an apologist on the right to filter.</p>
+          </div>
+          <div id="bible-heatmap-body">${renderBibleHeatmap('all')}</div>
+        </div>
+        <aside class="apologist-panel">
+          <div class="apologist-panel-head">
+            <h3>Apologists</h3>
+            <button class="apologist-all-btn" onclick="bibleSelectThinker('all')">Show All</button>
+          </div>
+          <div class="apologist-list">
+            ${renderApologistList()}
+          </div>
+        </aside>
+      </div>
+
       <div id="bible-results" class="bible-results">
         <div class="bible-placeholder">
           <p>Try: <a href="#" onclick="bibleQuick('John 3:16')">John 3:16</a> · <a href="#" onclick="bibleQuick('Romans 8')">Romans 8</a> · <a href="#" onclick="bibleQuick('Psalm 23')">Psalm 23</a> · <a href="#" onclick="bibleQuick('Isaiah 53')">Isaiah 53</a></p>
@@ -875,28 +959,55 @@ function renderBible() {
   `);
 }
 
-function renderBibleHeatmap() {
+function renderBibleHeatmap(thinkerId) {
   const ot = BIBLE_BOOKS.filter(b=>b.testament==='OT');
   const nt = BIBLE_BOOKS.filter(b=>b.testament==='NT');
   const cell = b => {
-    const intensity = b.usage / 100;
-    const bg = `rgba(201, 162, 39, ${0.08 + intensity*0.85})`;
-    return `<div class="hm-cell" style="background:${bg}" title="${b.name} — citation weight ${b.usage}/100" onclick="bibleQuick('${b.name} 1')">
+    const v = getBookUsage(thinkerId, b);
+    const bg = bucketColor(v);
+    const textColor = v >= 56 ? '#fff' : '#2a2a2a';
+    const subColor = v >= 56 ? 'rgba(255,255,255,0.8)' : '#555';
+    return `<div class="hm-cell" data-book="${b.name}" style="background:${bg};color:${textColor}" title="${b.name} — citation weight ${v}/100" onclick="bibleQuick('${b.name} 1')">
       <span class="hm-abbr">${b.abbr}</span>
-      <span class="hm-val">${b.usage}</span>
+      <span class="hm-val" style="color:${subColor}">${v}</span>
     </div>`;
   };
+  const legend = HEATMAP_BUCKETS.map(bk =>
+    `<div class="hm-legend-chip"><span class="hm-legend-swatch" style="background:${bk.color}"></span>${bk.label}</div>`
+  ).join('');
   return `
-    <div class="hm-legend">
-      <span>Less cited</span>
-      <div class="hm-gradient"></div>
-      <span>Most cited</span>
-    </div>
+    <div class="hm-legend">${legend}</div>
     <div class="hm-row-label">Old Testament</div>
     <div class="hm-grid">${ot.map(cell).join('')}</div>
     <div class="hm-row-label">New Testament</div>
     <div class="hm-grid">${nt.map(cell).join('')}</div>
   `;
+}
+
+function renderApologistList() {
+  const ids = Object.keys(APOLOGIST_EMPHASIS).filter(id => THINKERS[id]);
+  const sorted = ids.sort((a,b) => THINKERS[a].name.localeCompare(THINKERS[b].name));
+  return sorted.map(id => `
+    <button class="apologist-chip" data-id="${id}" onclick="bibleSelectThinker('${id}')">
+      <span class="apologist-chip-name">${THINKERS[id].name}</span>
+      <span class="apologist-chip-years">${THINKERS[id].years}</span>
+    </button>
+  `).join('');
+}
+
+function bibleSelectThinker(thinkerId) {
+  BIBLE_STATE.thinker = thinkerId;
+  const body = document.getElementById('bible-heatmap-body');
+  if (body) body.innerHTML = renderBibleHeatmap(thinkerId);
+  const cap = document.getElementById('hm-caption');
+  if (cap) {
+    cap.textContent = thinkerId === 'all'
+      ? 'Relative frequency with which each book of the Bible is cited across major apologetics works. Click an apologist on the right to filter.'
+      : `Showing the biblical books most referenced by ${THINKERS[thinkerId].name} across their books and papers.`;
+  }
+  document.querySelectorAll('.apologist-chip').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === thinkerId);
+  });
 }
 
 function bibleSetTranslation(val) {
@@ -911,12 +1022,44 @@ function bibleQuick(ref) {
   bibleLookup();
 }
 
+function bibleGoChapter(delta) {
+  if (!BIBLE_STATE.currentBook) return;
+  const idx = BIBLE_BOOKS.findIndex(b => b.name === BIBLE_STATE.currentBook);
+  if (idx < 0) return;
+  let book = BIBLE_BOOKS[idx];
+  let ch = BIBLE_STATE.currentChapter + delta;
+  if (ch < 1) {
+    if (idx === 0) return;
+    book = BIBLE_BOOKS[idx - 1];
+    ch = book.chapters;
+  } else if (ch > book.chapters) {
+    if (idx === BIBLE_BOOKS.length - 1) return;
+    book = BIBLE_BOOKS[idx + 1];
+    ch = 1;
+  }
+  bibleQuick(`${book.name} ${ch}`);
+}
+
 async function bibleLookup() {
   const q = (document.getElementById('bible-search').value || '').trim();
   if (!q) return;
   const results = document.getElementById('bible-results');
   results.innerHTML = `<div class="bible-loading">Loading ${escapeHtml(q)}…</div>`;
   const trans = BIBLE_TRANSLATIONS[BIBLE_STATE.translation];
+
+  const parsed = parseBibleReference(q);
+  if (parsed) {
+    BIBLE_STATE.currentBook = parsed.book;
+    BIBLE_STATE.currentChapter = parsed.chapter;
+    document.querySelectorAll('.hm-cell').forEach(el => {
+      el.classList.toggle('hm-cell-active', el.dataset.book === parsed.book);
+    });
+  } else {
+    BIBLE_STATE.currentBook = null;
+    BIBLE_STATE.currentChapter = null;
+    document.querySelectorAll('.hm-cell').forEach(el => el.classList.remove('hm-cell-active'));
+  }
+
   try {
     const url = `https://bible-api.com/${encodeURIComponent(q)}?translation=${trans.id}`;
     const res = await fetch(url);
@@ -926,6 +1069,7 @@ async function bibleLookup() {
   } catch (e) {
     results.innerHTML = `<div class="bible-error">Could not find "<strong>${escapeHtml(q)}</strong>". Try a reference like <em>John 3:16</em> or <em>Romans 8:28</em>.</div>`;
   }
+  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderBiblePassage(data, q) {
@@ -936,13 +1080,36 @@ function renderBiblePassage(data, q) {
       <span class="bible-vtext">${escapeHtml(v.text.trim())}</span>
     </div>
   `).join('');
+
+  let prevDisabled = true, nextDisabled = true;
+  let prevLabel = '', nextLabel = '';
+  if (BIBLE_STATE.currentBook) {
+    const idx = BIBLE_BOOKS.findIndex(b => b.name === BIBLE_STATE.currentBook);
+    const book = BIBLE_BOOKS[idx];
+    const ch = BIBLE_STATE.currentChapter;
+    if (ch > 1) { prevDisabled = false; prevLabel = `${book.name} ${ch - 1}`; }
+    else if (idx > 0) { prevDisabled = false; prevLabel = `${BIBLE_BOOKS[idx-1].name} ${BIBLE_BOOKS[idx-1].chapters}`; }
+    if (ch < book.chapters) { nextDisabled = false; nextLabel = `${book.name} ${ch + 1}`; }
+    else if (idx < BIBLE_BOOKS.length - 1) { nextDisabled = false; nextLabel = `${BIBLE_BOOKS[idx+1].name} 1`; }
+  }
+
   return `
-    <div class="bible-passage">
-      <div class="bible-passage-head">
-        <h3>${escapeHtml(data.reference || q)}</h3>
-        <span class="bible-trans-badge">${trans.label}</span>
+    <div class="bible-passage-container">
+      <button class="bible-nav-btn bible-nav-prev" ${prevDisabled ? 'disabled' : ''} onclick="bibleGoChapter(-1)" title="${prevLabel ? 'Previous: ' + escapeHtml(prevLabel) : 'No previous chapter'}" aria-label="Previous chapter">
+        <span class="bible-nav-arrow">&#x2039;</span>
+        <span class="bible-nav-label">Prev</span>
+      </button>
+      <div class="bible-passage">
+        <div class="bible-passage-head">
+          <h3>${escapeHtml(data.reference || q)}</h3>
+          <span class="bible-trans-badge">${trans.label}</span>
+        </div>
+        ${verses || `<p>${escapeHtml(data.text || '')}</p>`}
       </div>
-      ${verses || `<p>${escapeHtml(data.text || '')}</p>`}
+      <button class="bible-nav-btn bible-nav-next" ${nextDisabled ? 'disabled' : ''} onclick="bibleGoChapter(1)" title="${nextLabel ? 'Next: ' + escapeHtml(nextLabel) : 'No next chapter'}" aria-label="Next chapter">
+        <span class="bible-nav-arrow">&#x203A;</span>
+        <span class="bible-nav-label">Next</span>
+      </button>
     </div>
   `;
 }
