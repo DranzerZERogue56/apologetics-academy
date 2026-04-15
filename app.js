@@ -1100,7 +1100,7 @@ function renderBiblePassage(data, q) {
         <span class="bible-nav-label">Prev</span>
       </button>
       <div class="bible-passage">
-        <input type="text" class="bible-current-ref" readonly value="${escapeHtml((BIBLE_STATE.currentBook || '') + (BIBLE_STATE.currentChapter ? ' ' + BIBLE_STATE.currentChapter : ''))}" aria-label="Current book and chapter" />
+        <input type="text" class="bible-current-ref" value="${escapeHtml((BIBLE_STATE.currentBook || '') + (BIBLE_STATE.currentChapter ? ' ' + BIBLE_STATE.currentChapter : ''))}" aria-label="Current book and chapter — edit and press Enter to jump" placeholder="e.g. John 3" onkeydown="if(event.key==='Enter'){event.preventDefault();bibleQuick(this.value.trim());}" />
         <div class="bible-passage-head">
           <h3>${escapeHtml(data.reference || q)}</h3>
           <span class="bible-trans-badge">${trans.label}</span>
