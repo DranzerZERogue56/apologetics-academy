@@ -1264,9 +1264,7 @@ function copyVerse(numEl) {
   const toCopy = `${payload.ref} — "${payload.text}"`;
 
   const flash = () => {
-    document.querySelectorAll('.bible-verse.copied').forEach(el => el.classList.remove('copied'));
-    verseRow.classList.add('copied');
-    setTimeout(() => verseRow.classList.remove('copied'), 1600);
+    verseRow.classList.toggle('copied');
     showCopiedToast(payload.ref);
   };
 
