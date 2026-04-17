@@ -881,13 +881,6 @@ function renderBible() {
         <p class="section-subtitle">Read, search, and study the Scriptures alongside the thinkers who interpret them.</p>
       </div>
 
-      <div class="bible-dark-toggle-row">
-        <button class="bible-dark-toggle" onclick="toggleBibleDark(this)">
-          <span class="bible-dark-icon">&#x1F319;</span>
-          <span class="bible-dark-label">Dark Mode</span>
-        </button>
-      </div>
-
       <div class="bible-controls">
         <div class="bible-translation-row">
           <label for="bible-trans">Translation:</label>
@@ -955,6 +948,13 @@ function renderBible() {
             ${renderApologistList()}
           </div>
         </aside>
+      </div>
+
+      <div class="bible-dark-toggle-row">
+        <button class="bible-dark-toggle" onclick="toggleBibleDark(this)">
+          <span class="bible-dark-icon">&#x1F319;</span>
+          <span class="bible-dark-label">Dark Mode</span>
+        </button>
       </div>
 
       <div id="bible-results" class="bible-results">
