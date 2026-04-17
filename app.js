@@ -1261,21 +1261,19 @@ function copyVerse(numEl) {
   catch { payload = null; }
   if (!payload) return;
 
+  // Toggle highlight immediately — independent of clipboard success
+  verseRow.classList.toggle('verse-highlight');
+  showCopiedToast(payload.ref);
+
   const toCopy = `${payload.ref} — "${payload.text}"`;
-
-  const flash = () => {
-    verseRow.classList.toggle('copied');
-    showCopiedToast(payload.ref);
-  };
-
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(toCopy).then(flash).catch(() => fallbackCopy(toCopy, flash));
+    navigator.clipboard.writeText(toCopy).catch(() => fallbackCopy(toCopy));
   } else {
-    fallbackCopy(toCopy, flash);
+    fallbackCopy(toCopy);
   }
 }
 
-function fallbackCopy(text, done) {
+function fallbackCopy(text) {
   const ta = document.createElement('textarea');
   ta.value = text;
   ta.style.position = 'fixed'; ta.style.top = '-1000px';
@@ -1283,7 +1281,6 @@ function fallbackCopy(text, done) {
   ta.select();
   try { document.execCommand('copy'); } catch {}
   document.body.removeChild(ta);
-  if (done) done();
 }
 
 function showCopiedToast(ref) {

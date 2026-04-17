@@ -1097,13 +1097,18 @@ footer {
 .bible-vnum:hover { background: #c9a227; color: #fff; transform: translateY(-1px); }
 .bible-vnum:active { transform: translateY(0); }
 .bible-vtext { color: #2a2a2a; flex: 1; }
-.bible-verse.copied .bible-vtext {
-  background: #fff3c4;
+.bible-verse.verse-highlight .bible-vtext {
+  background: #fff3c4 !important;
   border-radius: 4px;
   padding: 2px 6px;
-  transition: background 0.3s ease;
+  box-shadow: 0 0 0 2px #e0c97a;
+  transition: background 0.2s ease;
 }
-.bible-verse.copied .bible-vnum { background: #6e5613; color: #fff; border-color: #6e5613; }
+.bible-verse.verse-highlight .bible-vnum {
+  background: #6e5613 !important;
+  color: #fff !important;
+  border-color: #6e5613 !important;
+}
 .bible-copied-toast {
   position: fixed;
   bottom: 28px; left: 50%;
@@ -1152,7 +1157,7 @@ footer {
 .bible-page.bible-dark .bible-vtext { color: #e9e2cc; }
 .bible-page.bible-dark .bible-vnum { background: #2e2819; color: #e0c97a; border-color: #6e5613; }
 .bible-page.bible-dark .bible-vnum:hover { background: #c9a227; color: #1a1510; }
-.bible-page.bible-dark .bible-verse.copied .bible-vtext { background: #4d3c0d; color: #fff; }
+.bible-page.bible-dark .bible-verse.verse-highlight .bible-vtext { background: #4d3c0d !important; color: #fff !important; box-shadow: 0 0 0 2px #c9a227; }
 .bible-page.bible-dark .bible-current-ref { background: #2e2819; color: #e9e2cc; border-color: #3a3226; }
 .bible-page.bible-dark .bible-trans-badge { background: #3a3226; color: #e0c97a; }
 .bible-page.bible-dark .bible-translation-row label,
