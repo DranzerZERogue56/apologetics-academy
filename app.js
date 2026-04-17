@@ -881,6 +881,13 @@ function renderBible() {
         <p class="section-subtitle">Read, search, and study the Scriptures alongside the thinkers who interpret them.</p>
       </div>
 
+      <div class="bible-dark-toggle-row">
+        <button class="bible-dark-toggle" onclick="toggleBibleDark(this)">
+          <span class="bible-dark-icon">&#x1F319;</span>
+          <span class="bible-dark-label">Dark Mode</span>
+        </button>
+      </div>
+
       <div class="bible-controls">
         <div class="bible-translation-row">
           <label for="bible-trans">Translation:</label>
@@ -1106,12 +1113,16 @@ async function bibleLookup() {
 
 function renderBiblePassage(data, q) {
   const trans = BIBLE_TRANSLATIONS[BIBLE_STATE.translation];
-  const verses = (data.verses || []).map(v => `
-    <div class="bible-verse">
-      <span class="bible-vnum">${v.chapter}:${v.verse}</span>
-      <span class="bible-vtext">${escapeHtml(v.text.trim())}</span>
-    </div>
-  `).join('');
+  const verses = (data.verses || []).map(v => {
+    const text = v.text.trim();
+    const ref = `${BIBLE_STATE.currentBook || (data.reference || '').split(' ').slice(0,-1).join(' ')} ${v.chapter}:${v.verse}`.trim();
+    const payload = encodeURIComponent(JSON.stringify({ ref, text }));
+    return `
+    <div class="bible-verse" data-verse-payload="${payload}">
+      <span class="bible-vnum" onclick="copyVerse(this)" title="Click to copy verse">${v.chapter}:${v.verse}</span>
+      <span class="bible-vtext">${escapeHtml(text)}</span>
+    </div>`;
+  }).join('');
 
   let prevDisabled = true, nextDisabled = true;
   let prevLabel = '', nextLabel = '';
@@ -1226,6 +1237,68 @@ async function bibleAdvancedSearch() {
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ── Bible Dark Mode ─────────────────────────────────────────────────────────
+let BIBLE_DARK = false;
+function toggleBibleDark(btn) {
+  const page = document.querySelector('.bible-page');
+  if (!page) return;
+  BIBLE_DARK = !BIBLE_DARK;
+  page.classList.toggle('bible-dark', BIBLE_DARK);
+  const label = btn.querySelector('.bible-dark-label');
+  const icon = btn.querySelector('.bible-dark-icon');
+  if (label) label.textContent = BIBLE_DARK ? 'Light Mode' : 'Dark Mode';
+  if (icon) icon.innerHTML = BIBLE_DARK ? '&#x2600;' : '&#x1F319;';
+}
+
+// ── Verse click-to-copy ────────────────────────────────────────────────────
+function copyVerse(numEl) {
+  const verseRow = numEl.closest('.bible-verse');
+  if (!verseRow) return;
+  let payload;
+  try { payload = JSON.parse(decodeURIComponent(verseRow.dataset.versePayload || '')); }
+  catch { payload = null; }
+  if (!payload) return;
+
+  const toCopy = `${payload.ref} — "${payload.text}"`;
+
+  const flash = () => {
+    document.querySelectorAll('.bible-verse.copied').forEach(el => el.classList.remove('copied'));
+    verseRow.classList.add('copied');
+    setTimeout(() => verseRow.classList.remove('copied'), 1600);
+    showCopiedToast(payload.ref);
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(toCopy).then(flash).catch(() => fallbackCopy(toCopy, flash));
+  } else {
+    fallbackCopy(toCopy, flash);
+  }
+}
+
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed'; ta.style.top = '-1000px';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch {}
+  document.body.removeChild(ta);
+  if (done) done();
+}
+
+function showCopiedToast(ref) {
+  let toast = document.querySelector('.bible-copied-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'bible-copied-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = `Copied ${ref}`;
+  requestAnimationFrame(() => toast.classList.add('show'));
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 1500);
 }
 
 // ── Init ────────────────────────────────────────────────────────────────────
