@@ -826,52 +826,56 @@ function bucketColor(v) {
   return HEATMAP_BUCKETS[0].color;
 }
 
-// Per-apologist emphasis profiles (primary = heavily cited, secondary = moderately)
+// Per-apologist citation weights (0–100, relative within each thinker).
+// Hand-authored from each figure's actual corpus emphasis — e.g. Habermas'
+// minimal-facts case lives in 1 Cor 15, Sproul's Holiness of God in Isaiah 6,
+// Lennox wrote whole books on Genesis (Seven Days) and Daniel (Against the
+// Flow), Keller on Jonah, Kreeft on Ecclesiastes/Job/Song of Solomon.
+// Books not listed fall to a faint baseline. Aristotle (null) predates the
+// biblical canon and cited no Scripture.
 const APOLOGIST_EMPHASIS = {
-  aquinas:    { primary: ['Romans','John','Matthew','Hebrews','Psalms','Isaiah','1 Corinthians','Genesis'], secondary: ['Ephesians','Galatians','Proverbs','Exodus','Acts','James'] },
-  lewis:      { primary: ['Matthew','John','Romans','Psalms','Genesis'], secondary: ['1 Corinthians','Ecclesiastes','Isaiah','Hebrews','Revelation'] },
-  craig:      { primary: ['John','Luke','Acts','1 Corinthians','Matthew','Romans'], secondary: ['Genesis','Isaiah','Mark','Daniel'] },
-  habermas:   { primary: ['1 Corinthians','Luke','Matthew','John','Acts','Mark'], secondary: ['Romans','Galatians','Isaiah'] },
-  mcdowell:   { primary: ['Matthew','John','Luke','Acts','1 Corinthians','Isaiah'], secondary: ['Daniel','Psalms','Romans','Genesis'] },
-  vantil:     { primary: ['Romans','John','Genesis','Proverbs','1 Corinthians'], secondary: ['Psalms','Isaiah','Colossians','Ephesians'] },
-  bahnsen:    { primary: ['Deuteronomy','Romans','Proverbs','Matthew','Exodus','Psalms'], secondary: ['Leviticus','Isaiah','John','1 Corinthians'] },
-  plantinga:  { primary: ['Romans','John','Psalms','Isaiah'], secondary: ['Matthew','Genesis','1 Corinthians','Ecclesiastes'] },
-  augustine:  { primary: ['Psalms','Genesis','John','Romans','Matthew'], secondary: ['1 Corinthians','Isaiah','Ephesians','Galatians'] },
-  anselm:     { primary: ['Psalms','Romans','John','Isaiah'], secondary: ['Matthew','Genesis','Hebrews'] },
-  pascal:     { primary: ['Isaiah','Matthew','John','Psalms','Daniel','Romans'], secondary: ['Genesis','Ecclesiastes','Luke','Hebrews'] },
-  paley:      { primary: ['Psalms','Romans','Matthew','John'], secondary: ['Genesis','Isaiah','Job','Acts'] },
-  schaeffer:  { primary: ['Genesis','Romans','John','Ecclesiastes','Isaiah'], secondary: ['Matthew','1 Corinthians','Psalms','Acts','Colossians'] },
-  kreeft:     { primary: ['Matthew','John','Romans','Psalms','Ecclesiastes','1 Corinthians'], secondary: ['Genesis','Luke','Isaiah','Hebrews'] },
-  moreland:   { primary: ['Romans','John','1 Corinthians','Matthew','Acts'], secondary: ['Genesis','Colossians','Luke','Hebrews'] },
-  feser:      { primary: ['Romans','Matthew','John','Psalms','Hebrews'], secondary: ['Genesis','1 Corinthians','Isaiah'] },
-  mcgrath:    { primary: ['Romans','John','Genesis','Matthew','1 Corinthians'], secondary: ['Isaiah','Psalms','Acts','Ephesians'] },
-  lennox:     { primary: ['Genesis','John','Romans','Matthew','Psalms'], secondary: ['1 Corinthians','Daniel','Acts','Isaiah'] },
-  chesterton: { primary: ['Matthew','John','Psalms','Genesis','Luke'], secondary: ['Job','Ecclesiastes','Romans','Isaiah'] },
-  montgomery: { primary: ['Luke','Acts','1 Corinthians','John','Matthew'], secondary: ['Mark','Romans','Galatians'] },
-  menuge:     { primary: ['Romans','John','Genesis','1 Corinthians'], secondary: ['Matthew','Psalms','Acts'] },
-  geisler:    { primary: ['Romans','John','1 Corinthians','Genesis','Matthew','Acts'], secondary: ['Isaiah','Luke','2 Peter','Daniel'] },
-  sproul:     { primary: ['Romans','Isaiah','Genesis','John','Ephesians'], secondary: ['Matthew','Psalms','1 Corinthians','Hebrews'] },
-  frame:      { primary: ['Deuteronomy','Romans','John','Isaiah','Psalms','Exodus'], secondary: ['Matthew','Genesis','1 Corinthians'] },
-  grotius:    { primary: ['Matthew','John','Romans','Acts','Luke'], secondary: ['1 Corinthians','Isaiah','Genesis'] },
-  greenleaf:  { primary: ['Matthew','Mark','Luke','John','Acts'], secondary: ['1 Corinthians','Romans'] },
-  strobel:    { primary: ['Matthew','John','Luke','1 Corinthians','Acts','Mark'], secondary: ['Romans','Isaiah','Daniel'] },
-  wallace:    { primary: ['Matthew','Mark','Luke','John','Acts'], secondary: ['1 Corinthians','Romans','2 Peter'] },
-  keller:     { primary: ['Genesis','Romans','Luke','John','Isaiah','Jonah'], secondary: ['Matthew','Ecclesiastes','Psalms','1 Corinthians'] },
-  groothuis:  { primary: ['Romans','John','1 Corinthians','Matthew','Acts'], secondary: ['Genesis','Psalms','Isaiah'] },
-  turek:      { primary: ['Romans','John','Genesis','Matthew','1 Corinthians'], secondary: ['Acts','Luke','Isaiah'] },
-  horn:       { primary: ['Matthew','1 Corinthians','Acts','John','Romans'], secondary: ['James','Luke','2 Peter'] },
-  aristotle:  { primary: [], secondary: [] }
+  aristotle:  null,
+  aquinas:    { 'John': 88, 'Romans': 85, 'Psalms': 78, 'Matthew': 72, 'Exodus': 70, 'Hebrews': 68, '1 Corinthians': 62, 'Isaiah': 60, 'Job': 55, 'Genesis': 52, 'Luke': 40, 'Ephesians': 35, 'Galatians': 32, '2 Corinthians': 30, 'Acts': 30, 'Proverbs': 28, 'Colossians': 28, 'Deuteronomy': 25, '1 Timothy': 25 },
+  augustine:  { 'Psalms': 95, 'John': 90, 'Genesis': 85, 'Romans': 80, 'Matthew': 60, '1 Corinthians': 55, '1 John': 50, 'Galatians': 45, 'Luke': 35, 'Exodus': 35, 'Isaiah': 30, 'Ephesians': 30, 'Acts': 25, '2 Corinthians': 25 },
+  anselm:     { 'Psalms': 85, 'Romans': 55, 'John': 50, 'Hebrews': 45, 'Matthew': 40, 'Isaiah': 35, 'Genesis': 25, '1 Corinthians': 25 },
+  grotius:    { 'Matthew': 75, 'John': 70, 'Luke': 65, 'Acts': 60, 'Mark': 55, '1 Corinthians': 50, 'Romans': 45, 'Isaiah': 30, 'Genesis': 25, 'Psalms': 20, 'Daniel': 20 },
+  pascal:     { 'Isaiah': 88, 'Matthew': 62, 'Psalms': 60, 'Daniel': 58, 'John': 55, 'Romans': 45, 'Ecclesiastes': 45, 'Genesis': 40, '1 Corinthians': 40, 'Luke': 30, 'Exodus': 25 },
+  paley:      { 'Acts': 70, 'Matthew': 65, 'Luke': 60, 'John': 58, 'Mark': 50, '1 Corinthians': 45, 'Romans': 40, 'Psalms': 30, 'Genesis': 25 },
+  greenleaf:  { 'Matthew': 85, 'John': 84, 'Luke': 82, 'Mark': 80, 'Acts': 55, '1 Corinthians': 30, 'Romans': 15 },
+  chesterton: { 'Job': 80, 'Matthew': 65, 'John': 50, 'Luke': 48, 'Genesis': 45, 'Psalms': 35, 'Ecclesiastes': 30, 'Mark': 25, 'Isaiah': 20 },
+  lewis:      { 'Psalms': 88, 'Matthew': 70, 'John': 65, 'Romans': 55, 'Genesis': 50, '1 Corinthians': 48, 'Luke': 45, 'Job': 35, 'Mark': 30, 'Ecclesiastes': 30, 'Isaiah': 30, 'Hebrews': 28, 'Revelation': 25, '2 Corinthians': 20 },
+  vantil:     { 'Romans': 92, 'Genesis': 75, 'John': 70, '1 Corinthians': 65, 'Proverbs': 55, 'Colossians': 50, 'Psalms': 45, 'Isaiah': 35, 'Acts': 30, 'Ephesians': 30, 'Matthew': 25 },
+  schaeffer:  { 'Genesis': 90, 'Romans': 75, 'John': 60, 'Ecclesiastes': 55, 'Jeremiah': 45, 'Isaiah': 40, 'Psalms': 35, '1 Corinthians': 35, 'Lamentations': 30, 'Matthew': 30, 'Acts': 28, 'Colossians': 25, 'Job': 20 },
+  montgomery: { 'Luke': 80, 'Acts': 75, 'John': 72, '1 Corinthians': 70, 'Matthew': 68, 'Mark': 60, 'Romans': 35, 'Galatians': 30, '2 Peter': 25, 'Isaiah': 20 },
+  geisler:    { 'Romans': 80, 'John': 75, 'Genesis': 65, 'Matthew': 62, '1 Corinthians': 60, 'Acts': 55, 'Luke': 48, 'Isaiah': 42, 'Psalms': 40, '2 Peter': 40, 'Daniel': 38, 'Hebrews': 35, '2 Timothy': 30, 'Exodus': 28 },
+  sproul:     { 'Isaiah': 92, 'Romans': 85, 'John': 62, 'Genesis': 60, 'Ephesians': 55, 'Psalms': 45, 'Matthew': 40, 'Exodus': 40, 'Hebrews': 38, '1 Corinthians': 35, 'Galatians': 30 },
+  frame:      { 'Deuteronomy': 78, 'Romans': 72, 'Exodus': 60, 'John': 58, 'Psalms': 55, 'Isaiah': 45, 'Genesis': 42, '1 Corinthians': 38, 'Matthew': 35, 'Proverbs': 30, 'Colossians': 25 },
+  bahnsen:    { 'Romans': 88, 'Proverbs': 72, 'Deuteronomy': 68, 'Matthew': 55, '1 Corinthians': 52, 'Exodus': 50, 'Psalms': 48, 'Colossians': 45, 'Leviticus': 40, 'John': 38, 'Genesis': 35, 'Acts': 30, 'Isaiah': 25 },
+  plantinga:  { 'Romans': 60, 'Psalms': 30, 'John': 25, 'Genesis': 22, '1 Corinthians': 20, 'Matthew': 18, 'Isaiah': 12 },
+  habermas:   { '1 Corinthians': 97, 'Luke': 70, 'Acts': 68, 'John': 65, 'Matthew': 62, 'Mark': 60, 'Galatians': 58, 'Romans': 40, 'Isaiah': 20, 'Psalms': 15, 'Daniel': 10 },
+  craig:      { '1 Corinthians': 80, 'Genesis': 70, 'John': 68, 'Luke': 65, 'Mark': 60, 'Matthew': 58, 'Acts': 55, 'Romans': 50, 'Isaiah': 30, 'Psalms': 28, 'Hebrews': 25, 'Daniel': 22, 'Colossians': 20 },
+  mcdowell:   { 'Isaiah': 80, 'Matthew': 78, 'John': 72, 'Luke': 68, 'Psalms': 65, '1 Corinthians': 60, 'Daniel': 60, 'Acts': 58, 'Mark': 55, 'Zechariah': 45, 'Micah': 40, 'Romans': 35, 'Genesis': 30, '2 Peter': 20 },
+  moreland:   { 'Romans': 65, 'John': 60, '1 Corinthians': 55, 'Matthew': 50, 'Acts': 48, 'Genesis': 45, 'Colossians': 40, 'Luke': 35, 'Hebrews': 30, 'Psalms': 28, '2 Corinthians': 25 },
+  keller:     { 'Genesis': 78, 'Luke': 75, 'Jonah': 72, 'Romans': 70, 'John': 65, 'Job': 58, 'Isaiah': 55, 'Psalms': 50, 'Ecclesiastes': 48, 'Matthew': 45, 'Galatians': 45, '1 Corinthians': 42, 'Proverbs': 40, 'Exodus': 30 },
+  strobel:    { 'Matthew': 72, 'John': 70, 'Luke': 68, 'Mark': 65, '1 Corinthians': 62, 'Acts': 60, 'Isaiah': 40, 'Romans': 35, 'Psalms': 30, 'Genesis': 28, 'Daniel': 25 },
+  wallace:    { 'Mark': 85, 'Matthew': 82, 'Luke': 80, 'John': 78, 'Acts': 65, '1 Corinthians': 45, '2 Peter': 40, '1 Peter': 35, 'Romans': 25, 'Genesis': 20 },
+  mcgrath:    { 'John': 70, 'Romans': 65, 'Genesis': 60, 'Psalms': 45, 'Matthew': 42, '1 Corinthians': 40, 'Isaiah': 35, 'Luke': 32, 'Ephesians': 30, 'Job': 25, 'Acts': 25 },
+  lennox:     { 'Genesis': 90, 'John': 82, 'Daniel': 75, 'Romans': 55, 'Matthew': 45, '1 Corinthians': 42, 'Psalms': 40, 'Acts': 38, 'Luke': 35, 'Isaiah': 30, 'Proverbs': 25, 'Ecclesiastes': 20 },
+  kreeft:     { 'Ecclesiastes': 75, 'Job': 72, 'Matthew': 68, 'Song of Solomon': 65, 'John': 62, 'Psalms': 55, 'Romans': 50, '1 Corinthians': 45, 'Genesis': 40, 'Luke': 38, 'Isaiah': 30, 'Revelation': 28, 'Hebrews': 25 },
+  feser:      { 'Romans': 50, 'Exodus': 45, 'John': 40, 'Matthew': 30, 'Psalms': 25, 'Genesis': 22, '1 Corinthians': 20, 'Hebrews': 18 },
+  menuge:     { 'Romans': 60, 'John': 55, 'Genesis': 50, '1 Corinthians': 45, 'Matthew': 38, 'Psalms': 32, 'Acts': 28, 'Colossians': 25 },
+  groothuis:  { 'Romans': 68, 'John': 62, '1 Corinthians': 55, 'Matthew': 52, 'Genesis': 48, 'Acts': 45, 'Ecclesiastes': 40, 'Psalms': 38, 'Isaiah': 32, 'Luke': 30, 'Proverbs': 25, 'Daniel': 20 },
+  turek:      { 'Romans': 62, 'John': 60, 'Genesis': 58, 'Matthew': 52, '1 Corinthians': 48, 'Acts': 42, 'Luke': 40, 'Psalms': 30, 'Isaiah': 28, 'Daniel': 22, '2 Peter': 20 },
+  horn:       { 'Matthew': 75, '1 Corinthians': 62, 'John': 58, 'Acts': 55, 'Romans': 48, 'James': 45, 'Luke': 42, 'Galatians': 35, 'Hebrews': 30, '2 Peter': 30, '2 Thessalonians': 25, 'Genesis': 25, 'Psalms': 22 }
 };
 
 function getBookUsage(thinkerId, book) {
   if (thinkerId === 'all') return book.usage;
-  const emph = APOLOGIST_EMPHASIS[thinkerId];
-  if (!emph) return Math.round(book.usage * 0.4);
-  const p = emph.primary.indexOf(book.name);
-  if (p !== -1) return Math.max(72, 96 - p * 3);
-  const s = emph.secondary.indexOf(book.name);
-  if (s !== -1) return Math.max(32, 58 - s * 4);
-  return Math.max(2, Math.round(book.usage * 0.22));
+  if (!(thinkerId in APOLOGIST_EMPHASIS)) return Math.round(book.usage * 0.4);
+  const weights = APOLOGIST_EMPHASIS[thinkerId];
+  if (!weights) return 0;
+  if (book.name in weights) return weights[book.name];
+  return Math.min(8, Math.round(book.usage * 0.08));
 }
 
 function renderBible() {
@@ -1002,9 +1006,13 @@ function bibleSelectThinker(thinkerId) {
   if (body) body.innerHTML = renderBibleHeatmap(thinkerId);
   const cap = document.getElementById('hm-caption');
   if (cap) {
-    cap.textContent = thinkerId === 'all'
-      ? 'Relative frequency with which each book of the Bible is cited across major apologetics works. Click an apologist on the right to filter.'
-      : `Showing the biblical books most referenced by ${THINKERS[thinkerId].name} across their books and papers.`;
+    if (thinkerId === 'all') {
+      cap.textContent = 'Relative frequency with which each book of the Bible is cited across major apologetics works. Click an apologist on the right to filter.';
+    } else if (!APOLOGIST_EMPHASIS[thinkerId]) {
+      cap.textContent = `${THINKERS[thinkerId].name} predates the biblical canon and cited no Scripture; he is included for his philosophical influence on later apologists.`;
+    } else {
+      cap.textContent = `Showing the biblical books most referenced by ${THINKERS[thinkerId].name} across their books and papers.`;
+    }
   }
   document.querySelectorAll('.apologist-chip').forEach(el => {
     el.classList.toggle('active', el.dataset.id === thinkerId);
