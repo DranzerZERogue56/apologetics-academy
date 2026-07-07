@@ -18,6 +18,7 @@ function navigateTo(page, id) {
 
 function setContent(html) {
   document.getElementById('app').innerHTML = html;
+  syncBibleDark();
 }
 
 // ── Home ────────────────────────────────────────────────────────────────────
@@ -950,13 +951,6 @@ function renderBible() {
         </aside>
       </div>
 
-      <div class="bible-dark-toggle-row">
-        <button class="bible-dark-toggle" onclick="toggleBibleDark(this)">
-          <span class="bible-dark-icon">&#x1F319;</span>
-          <span class="bible-dark-label">Dark Mode</span>
-        </button>
-      </div>
-
       <div id="bible-results" class="bible-results">
         <div class="bible-placeholder">
           <p>Try: <a href="#" onclick="bibleQuick('John 3:16')">John 3:16</a> · <a href="#" onclick="bibleQuick('Romans 8')">Romans 8</a> · <a href="#" onclick="bibleQuick('Psalm 23')">Psalm 23</a> · <a href="#" onclick="bibleQuick('Isaiah 53')">Isaiah 53</a></p>
@@ -1239,17 +1233,29 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-// ── Bible Dark Mode ─────────────────────────────────────────────────────────
-let BIBLE_DARK = false;
-function toggleBibleDark(btn) {
-  const page = document.querySelector('.bible-page');
-  if (!page) return;
-  BIBLE_DARK = !BIBLE_DARK;
-  page.classList.toggle('bible-dark', BIBLE_DARK);
-  const label = btn.querySelector('.bible-dark-label');
-  const icon = btn.querySelector('.bible-dark-icon');
-  if (label) label.textContent = BIBLE_DARK ? 'Light Mode' : 'Dark Mode';
-  if (icon) icon.innerHTML = BIBLE_DARK ? '&#x2600;' : '&#x1F319;';
+// ── Site-wide Dark Mode ─────────────────────────────────────────────────────
+let SITE_DARK = localStorage.getItem('siteDark') === '1';
+
+function syncBibleDark() {
+  document.querySelectorAll('.bible-page').forEach(p => p.classList.toggle('bible-dark', SITE_DARK));
+}
+
+function applySiteDark() {
+  document.body.classList.toggle('site-dark', SITE_DARK);
+  syncBibleDark();
+  const btn = document.getElementById('site-dark-btn');
+  if (btn) {
+    const icon = btn.querySelector('.site-dark-icon');
+    const label = btn.querySelector('.site-dark-label');
+    if (icon) icon.innerHTML = SITE_DARK ? '&#x2600;' : '&#x1F319;';
+    if (label) label.textContent = SITE_DARK ? 'Light Mode' : 'Dark Mode';
+  }
+}
+
+function toggleSiteDark() {
+  SITE_DARK = !SITE_DARK;
+  localStorage.setItem('siteDark', SITE_DARK ? '1' : '0');
+  applySiteDark();
 }
 
 // ── Verse click-to-copy ────────────────────────────────────────────────────
@@ -1297,4 +1303,5 @@ function showCopiedToast(ref) {
 }
 
 // ── Init ────────────────────────────────────────────────────────────────────
+applySiteDark();
 navigateTo('home');
