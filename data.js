@@ -440,6 +440,43 @@ const COURSES = [
     description: "The oldest and most systematic approach to defending the faith. Classical apologetics proceeds in two steps: first, establish that God exists using philosophical arguments (cosmological, teleological, moral), then demonstrate that Christianity is the true revelation of that God. Rooted in Aristotle and perfected by Aquinas, this method emphasizes logic, metaphysics, and natural theology.",
     method: "Establish theism through reason and natural theology, then use historical evidence to identify the Christian God as the true God.",
     thinkerIds: ["aristotle", "aquinas", "anselm", "geisler", "sproul", "craig", "feser", "kreeft"],
+    units: [
+      {
+        title: "Groundwork — Can We Reason at All?",
+        coreIdeas: [
+          "The three laws of thought are preconditions of every meaningful claim — even the claim that denies them.",
+          "Skepticism and relativism are self-defeating: 'there is no truth' claims to be true.",
+          "The reliability of reason itself is better explained by a rational God than by unguided naturalism."
+        ],
+        lessonIdxs: [0]
+      },
+      {
+        title: "The Theistic Proofs",
+        coreIdeas: [
+          "A contingent universe requires a necessary, uncaused ground of being — the cosmological family of arguments.",
+          "The greatest conceivable being, if even possible, exists necessarily — Anselm's and Plantinga's ontological arguments.",
+          "Cosmic fine-tuning and the objective moral law point beyond nature to a designing, law-giving mind."
+        ],
+        lessonIdxs: [1, 2, 3]
+      },
+      {
+        title: "The Classical Tradition Renewed",
+        coreIdeas: [
+          "Every change is a potential made actual, and the chain of actualizers must terminate in Pure Act.",
+          "The God of classical theism is not a superbeing among beings but Being itself — a target most modern atheism never engages."
+        ],
+        lessonIdxs: [4]
+      },
+      {
+        title: "The Case Assembled",
+        coreIdeas: [
+          "Classical apologetics is a two-step method: establish theism by reason, then Christianity by historical evidence.",
+          "Twenty converging arguments make a cumulative case stronger than any single proof.",
+          "Socratic questioning lets the skeptic discover the truth for themselves rather than have it asserted at them."
+        ],
+        lessonIdxs: [5, 6]
+      }
+    ],
     lessons: [
       {
         title: "Foundations of Logic and First Principles",
@@ -464,8 +501,8 @@ const COURSES = [
           { question: "How does naturalism struggle to ground the reliability of reason?", answer: "If human cognitive faculties evolved solely for reproductive survival, they were selected for usefulness, not truth. Useful beliefs need not be true ones (consider how many successful species hold no beliefs at all). Plantinga's Evolutionary Argument Against Naturalism formalizes this: the naturalist has a defeater for trusting his own reasoning, including the reasoning that led him to naturalism. Theism, by contrast, holds that human reason reflects the image of a rational God — exactly the grounding needed for reason to track truth." }
         ],
         topics: ["The three laws of thought", "Self-referential absurdity", "Why relativism is self-defeating", "Aristotle's Posterior Analytics and demonstration"],
-        keyQuote: "It is the mark of an educated mind to be able to entertain a thought without accepting it.",
-        quoteSource: "Aristotle, Metaphysics",
+        keyQuote: "It is the mark of an educated man to look for precision in each class of things just so far as the nature of the subject admits.",
+        quoteSource: "Aristotle, Nicomachean Ethics I.3",
         exposition: [
           "Before any argument for God's existence can get off the ground, we must first establish that rational argument itself is possible. This may seem obvious, but in our contemporary intellectual culture — saturated with relativism, subjectivism, and 'my truth vs. your truth' thinking — it is anything but. The classical apologist insists on beginning at the very beginning: the laws of logic that make all thought, communication, and even disagreement possible.",
           "Aristotle identified three foundational laws: the Law of Identity (A is A), the Law of Non-Contradiction (A cannot be both A and not-A at the same time and in the same sense), and the Law of Excluded Middle (either A or not-A). These are not human conventions or cultural constructs — they are the preconditions of any meaningful statement whatsoever. Even the person who denies them must use them in the very act of denial, which is why the denial is self-refuting.",
@@ -587,7 +624,7 @@ const COURSES = [
           "The argument has fascinated and divided philosophers for nearly a thousand years. Gaunilo of Marmoutiers immediately objected by constructing a parallel argument for a 'perfect island' — surely we cannot reason a perfect island into existence! Anselm replied that the argument works only for a being whose greatness is unlimited; islands, by their nature, have intrinsic limits. Kant later objected that 'existence is not a predicate' — existence is not a quality like wisdom or power that makes a thing greater. This objection dominated for two centuries until Alvin Plantinga revived the argument using modal logic.",
           "Plantinga's modal version runs: (1) It is possible that a maximally great being exists. (2) If it is possible, then in some possible world a maximally great being exists. (3) A maximally great being, by definition, exists in every possible world. (4) If it exists in every possible world, it exists in the actual world. (5) Therefore, a maximally great being exists. The key move is that if it is even possible that God exists — if the concept involves no logical contradiction — then God exists necessarily. This shifts the burden: the atheist must show that the concept of God is logically impossible, which is an extremely difficult claim to defend."
         ],
-        historicalContext: "Anselm composed the Proslogion around 1078 while serving as Abbot of Bec in Normandy. He sought a single argument that could prove God's existence without relying on multiple steps. The argument generated immediate controversy — Gaunilo's 'On Behalf of the Fool' was written during Anselm's own lifetime. Aquinas rejected the argument, believing we cannot know God's essence directly. It was rehabilitated by Descartes, Leibniz, and Hegel before Kant's famous critique. Plantinga's 1974 modal reformulation, published in The Nature of Necessity, sparked a new wave of serious philosophical engagement.",
+        historicalContext: "Anselm composed the Proslogion around 1077–1078 while prior of the abbey of Bec in Normandy, shortly before his election as abbot. He sought a single argument that could prove God's existence without relying on multiple steps. The argument generated immediate controversy — Gaunilo's 'On Behalf of the Fool' was written during Anselm's own lifetime. Aquinas rejected the argument, believing we cannot know God's essence directly. It was rehabilitated by Descartes, Leibniz, and Hegel before Kant's famous critique. Plantinga's 1974 modal reformulation, published in The Nature of Necessity, sparked a new wave of serious philosophical engagement.",
         commonObjections: [
           {
             objection: "You can't define things into existence. I can define a 'maximally great pizza' — does that make it real?",
@@ -690,7 +727,7 @@ const COURSES = [
           { question: "What is divine simplicity, and why does it matter?", answer: "Divine simplicity is the doctrine that God has no parts — no composition of matter and form, essence and existence, substance and accident. God is identical to His attributes: His goodness is His power is His knowledge is His being. This matters because any composite being requires a cause to unite its parts, so God cannot be composite on pain of requiring a further cause. Simplicity also grounds divine immutability, eternity, and necessity. Though counterintuitive, it is the logical consequence of taking seriously that God is the uncaused cause of all else." }
         ],
         topics: ["Act and potency — why there must be a purely actual being", "The argument from composition — why composite beings require a simple cause", "Why the 'God of classical theism' is not the God atheists think they are rejecting", "Formal and final causality as ineliminable features of nature"],
-        keyQuote: "The so-called New Atheism is really nothing more than the Old Atheism on stilts — a repetition of long-refuted objections dressed up in the rhetoric of scientific authority.",
+        keyQuote: "Abandoning Aristotelianism, as the founders of modern philosophy did, was the single greatest mistake ever made in the entire history of Western thought.",
         quoteSource: "Edward Feser, The Last Superstition",
         exposition: [
           "One of the most consequential developments in recent apologetics is the revival of Aristotelian-Thomistic philosophy, spearheaded by Edward Feser, David Oderberg, and others. Feser argues that the traditional proofs for God's existence have never been refuted — they have been forgotten. When early modern philosophers (Descartes, Hume, Kant) rejected Aristotle's metaphysics of act and potency, formal and final causality, they inadvertently sawed off the branch on which rational theology sat. But they also sawed off the branch on which science, ethics, and even reason itself sat.",

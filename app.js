@@ -125,22 +125,7 @@ function renderCourse(courseId) {
             <p>${c.method}</p>
           </div>
 
-          <h2>Lessons</h2>
-          <div class="lesson-list">
-            ${c.lessons.map((l, i) => `
-              <div class="lesson-card" onclick="navigateTo('lesson',{courseId:'${c.id}',lessonIdx:${i}})">
-                <div class="lesson-num">${i + 1}</div>
-                <div class="lesson-card-body">
-                  <h3>${l.title}</h3>
-                  <p>${l.description.substring(0, 120)}...</p>
-                  <span class="lesson-thinker-tag" style="background:${c.color}20;color:${c.color}">
-                    ${THINKERS[l.thinker].name}
-                  </span>
-                </div>
-                <div class="lesson-arrow">&rarr;</div>
-              </div>
-            `).join('')}
-          </div>
+          ${renderCourseLessons(c)}
         </div>
 
         <aside class="course-detail-side">
@@ -166,6 +151,43 @@ function renderCourse(courseId) {
       <a href="#" onclick="navigateTo('courses')">&larr; All Courses</a>
     </div>
   `);
+}
+
+const UNIT_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+
+function renderCourseLessons(c) {
+  const lessonCard = (l, i) => `
+    <div class="lesson-card" onclick="navigateTo('lesson',{courseId:'${c.id}',lessonIdx:${i}})">
+      <div class="lesson-num">${i + 1}</div>
+      <div class="lesson-card-body">
+        <h3>${l.title}</h3>
+        <p>${l.description.substring(0, 120)}...</p>
+        <span class="lesson-thinker-tag" style="background:${c.color}20;color:${c.color}">
+          ${THINKERS[l.thinker].name}
+        </span>
+      </div>
+      <div class="lesson-arrow">&rarr;</div>
+    </div>`;
+
+  if (!c.units) {
+    return `<h2>Lessons</h2>
+      <div class="lesson-list">${c.lessons.map(lessonCard).join('')}</div>`;
+  }
+
+  return `<h2>Curriculum</h2>
+    ${c.units.map((u, ui) => `
+      <div class="course-unit">
+        <div class="course-unit-head">
+          <span class="course-unit-label" style="background:${c.color}">Unit ${UNIT_NUMERALS[ui] || ui + 1}</span>
+          <h3>${u.title}</h3>
+        </div>
+        <div class="course-unit-ideas">
+          <span class="course-unit-ideas-label">Core ideas</span>
+          <ul>${u.coreIdeas.map(idea => `<li>${idea}</li>`).join('')}</ul>
+        </div>
+        <div class="lesson-list">${u.lessonIdxs.map(i => lessonCard(c.lessons[i], i)).join('')}</div>
+      </div>
+    `).join('')}`;
 }
 
 // ── Single lesson ───────────────────────────────────────────────────────────
