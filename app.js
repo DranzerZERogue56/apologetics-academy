@@ -29,7 +29,7 @@ function renderHome() {
       <div class="hero-content">
         <h1>Apologetics Academy</h1>
         <p class="hero-sub">Learn to give a reason for the hope that is in you.</p>
-        <p class="hero-verse">"But in your hearts revere Christ as Lord. Always be prepared to give an answer to everyone who asks you to give the reason for the hope that you have." &mdash; 1 Peter 3:15</p>
+        <p class="hero-verse">"But in your hearts revere Christ as Lord. Always be prepared to give an answer to everyone who asks you to give the reason for the hope that you have." - 1 Peter 3:15</p>
         <button class="btn-primary" onclick="navigateTo('courses')">Explore Courses</button>
       </div>
     </section>
@@ -230,7 +230,7 @@ function renderLesson(courseId, lessonIdx) {
         ${l.keyQuote ? `
           <blockquote class="lesson-quote" style="border-left-color:${c.color}">
             <p>"${l.keyQuote}"</p>
-            <cite>&mdash; ${l.quoteSource}</cite>
+            <cite>- ${l.quoteSource}</cite>
           </blockquote>
         ` : ''}
 
@@ -347,7 +347,7 @@ function renderLesson(courseId, lessonIdx) {
             ${l.readingList.map(r => {
               const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
               const match = BOOKS.find(b => norm(b.title) === norm(r.title));
-              const body = r.detail || [r.author ? `<em>${r.author}</em>` : '', r.note || ''].filter(Boolean).join(' &mdash; ');
+              const body = r.detail || [r.author ? `<em>${r.author}</em>` : '', r.note || ''].filter(Boolean).join(' - ');
               if (match) {
                 return `
                   <div class="reading-item reading-item-link" onclick="navigateTo('book','${match.id}')" role="link" tabindex="0">
@@ -520,7 +520,7 @@ function renderBooks() {
   setContent(`
     <section class="section page-top">
       <h1 class="page-title">Books</h1>
-      <p class="page-desc">Essential reading in Christian apologetics — from ancient classics to modern masterworks. Each book links to where you can find it online.</p>
+      <p class="page-desc">Essential reading in Christian apologetics - from ancient classics to modern masterworks. Each book links to where you can find it online.</p>
 
       <div class="book-filters">
         <button class="book-filter active" onclick="filterBooks('all', this)">All</button>
@@ -672,32 +672,32 @@ function renderAbout() {
     <section class="section page-top">
       <h1 class="page-title">About</h1>
       <div class="about-content">
-        <p>Apologetics Academy is a learning platform dedicated to equipping Christians with the intellectual tools to defend and commend their faith. We believe that faith and reason are not enemies but allies — and that the great tradition of Christian thought, stretching from Aristotle and Aquinas through the Reformers to the present day, provides a rich and rigorous foundation for belief.</p>
+        <p>Apologetics Academy is a learning platform dedicated to equipping Christians with the intellectual tools to defend and commend their faith. We believe that faith and reason are not enemies but allies - and that the great tradition of Christian thought, stretching from Aristotle and Aquinas through the Reformers to the present day, provides a rich and rigorous foundation for belief.</p>
 
         <h2>Our Approach</h2>
         <p>We organize our curriculum around the major <strong>schools of apologetic method</strong>:</p>
         <ul>
-          <li><strong>Classical Apologetics</strong> — philosophical proofs from first principles</li>
-          <li><strong>Evidential Apologetics</strong> — historical and empirical evidence</li>
-          <li><strong>Presuppositional Apologetics</strong> — worldview analysis and transcendental argument</li>
-          <li><strong>Cumulative Case</strong> — converging lines of evidence and literary imagination</li>
-          <li><strong>Legal-Jurisprudential Apologetics</strong> — courtroom-grade reasoning and human rights</li>
-          <li><strong>Science & Faith</strong> — why science points beyond itself to a Creator</li>
-          <li><strong>Cultural & Existential Apologetics</strong> — engaging the whole person through culture, story, and desire</li>
-          <li><strong>Patristic & Medieval Foundations</strong> — the ancient roots of Christian thought</li>
+          <li><strong>Classical Apologetics</strong> - philosophical proofs from first principles</li>
+          <li><strong>Evidential Apologetics</strong> - historical and empirical evidence</li>
+          <li><strong>Presuppositional Apologetics</strong> - worldview analysis and transcendental argument</li>
+          <li><strong>Cumulative Case</strong> - converging lines of evidence and literary imagination</li>
+          <li><strong>Legal-Jurisprudential Apologetics</strong> - courtroom-grade reasoning and human rights</li>
+          <li><strong>Science & Faith</strong> - why science points beyond itself to a Creator</li>
+          <li><strong>Cultural & Existential Apologetics</strong> - engaging the whole person through culture, story, and desire</li>
+          <li><strong>Patristic & Medieval Foundations</strong> - the ancient roots of Christian thought</li>
         </ul>
         <p>Within each school, you'll learn from the <strong>key thinkers</strong> who developed and championed that approach. Each lesson focuses on a specific thinker's contribution, guiding you through their arguments, key works, and core ideas.</p>
 
         <h2>How to Use This Site</h2>
         <ol>
           <li>Browse the <strong>Courses</strong> page to find an apologetic method that interests you.</li>
-          <li>Within each course, follow the <strong>lessons</strong> in order — they build on one another.</li>
+          <li>Within each course, follow the <strong>lessons</strong> in order - they build on one another.</li>
           <li>Visit the <strong>Thinkers</strong> page to explore individual philosophers and theologians.</li>
           <li>Each lesson includes recommended <strong>key works</strong> for deeper study.</li>
         </ol>
 
         <blockquote>
-          "The heart cannot rejoice in what the mind rejects." &mdash; John Warwick Montgomery
+          "The heart cannot rejoice in what the mind rejects." - John Warwick Montgomery
         </blockquote>
       </div>
     </section>
@@ -835,23 +835,23 @@ function parseBibleReference(q) {
   return null;
 }
 
-// Discrete color buckets — 7 levels
+// Discrete color buckets - 7 levels
 const HEATMAP_BUCKETS = [
-  { min:  0, max: 10, color: '#f5efe1', label: '0–10' },
-  { min: 11, max: 25, color: '#ecd9a0', label: '11–25' },
-  { min: 26, max: 40, color: '#e0bf5f', label: '26–40' },
-  { min: 41, max: 55, color: '#c9a227', label: '41–55' },
-  { min: 56, max: 70, color: '#9d7d1d', label: '56–70' },
-  { min: 71, max: 85, color: '#6e5613', label: '71–85' },
-  { min: 86, max: 100, color: '#3f3008', label: '86–100' }
+  { min:  0, max: 10, color: '#f5efe1', label: '0-10' },
+  { min: 11, max: 25, color: '#ecd9a0', label: '11-25' },
+  { min: 26, max: 40, color: '#e0bf5f', label: '26-40' },
+  { min: 41, max: 55, color: '#c9a227', label: '41-55' },
+  { min: 56, max: 70, color: '#9d7d1d', label: '56-70' },
+  { min: 71, max: 85, color: '#6e5613', label: '71-85' },
+  { min: 86, max: 100, color: '#3f3008', label: '86-100' }
 ];
 function bucketColor(v) {
   for (const b of HEATMAP_BUCKETS) if (v >= b.min && v <= b.max) return b.color;
   return HEATMAP_BUCKETS[0].color;
 }
 
-// Per-apologist citation weights (0–100, relative within each thinker).
-// Hand-authored from each figure's actual corpus emphasis — e.g. Habermas'
+// Per-apologist citation weights (0-100, relative within each thinker).
+// Hand-authored from each figure's actual corpus emphasis - e.g. Habermas'
 // minimal-facts case lives in 1 Cor 15, Sproul's Holiness of God in Isaiah 6,
 // Lennox wrote whole books on Genesis (Seven Days) and Daniel (Against the
 // Flow), Keller on Jonah, Kreeft on Ecclesiastes/Job/Song of Solomon.
@@ -922,12 +922,12 @@ function renderBible() {
         </div>
 
         <div class="bible-search-row">
-          <input id="bible-search" type="text" placeholder="Search a reference — e.g. John 3:16, Romans 8, Psalm 23:1-6" onkeydown="if(event.key==='Enter')bibleLookup()">
+          <input id="bible-search" type="text" placeholder="Search a reference - e.g. John 3:16, Romans 8, Psalm 23:1-6" onkeydown="if(event.key==='Enter')bibleLookup()">
           <button class="btn-primary" onclick="bibleLookup()">Look Up</button>
         </div>
 
         <details class="bible-advanced">
-          <summary>Advanced Search — find a verse when you only remember part of it</summary>
+          <summary>Advanced Search - find a verse when you only remember part of it</summary>
           <div class="bible-adv-body">
             <div class="bible-adv-grid">
               <label>Words / phrase I remember
@@ -996,7 +996,7 @@ function renderBibleHeatmap(thinkerId) {
     const bg = bucketColor(v);
     const textColor = v >= 56 ? '#fff' : '#2a2a2a';
     const subColor = v >= 56 ? 'rgba(255,255,255,0.8)' : '#555';
-    return `<div class="hm-cell" data-book="${b.name}" style="background:${bg};color:${textColor}" title="${b.name} — citation weight ${v}/100" onclick="bibleQuick('${b.name} 1')">
+    return `<div class="hm-cell" data-book="${b.name}" style="background:${bg};color:${textColor}" title="${b.name} - citation weight ${v}/100" onclick="bibleQuick('${b.name} 1')">
       <span class="hm-abbr">${b.abbr}</span>
       <span class="hm-val" style="color:${subColor}">${v}</span>
     </div>`;
@@ -1170,7 +1170,7 @@ function renderBiblePassage(data, q) {
       </button>
       <div class="bible-passage">
         <div class="bible-current-ref-wrap">
-          <input type="text" class="bible-current-ref" value="${escapeHtml((BIBLE_STATE.currentBook || '') + (BIBLE_STATE.currentChapter ? ' ' + BIBLE_STATE.currentChapter : ''))}" aria-label="Current book and chapter — edit and press Enter to jump" placeholder="e.g. John 3" autocomplete="off" oninput="bibleRefSuggest(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();bibleRefHide();bibleRefSubmit(this.value);}" onblur="setTimeout(bibleRefHide, 150)" onfocus="bibleRefSuggest(this)" />
+          <input type="text" class="bible-current-ref" value="${escapeHtml((BIBLE_STATE.currentBook || '') + (BIBLE_STATE.currentChapter ? ' ' + BIBLE_STATE.currentChapter : ''))}" aria-label="Current book and chapter - edit and press Enter to jump" placeholder="e.g. John 3" autocomplete="off" oninput="bibleRefSuggest(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();bibleRefHide();bibleRefSubmit(this.value);}" onblur="setTimeout(bibleRefHide, 150)" onfocus="bibleRefSuggest(this)" />
           <div class="bible-current-ref-suggest" hidden></div>
         </div>
         <div class="bible-passage-head">
@@ -1299,11 +1299,11 @@ function copyVerse(numEl) {
   catch { payload = null; }
   if (!payload) return;
 
-  // Toggle highlight immediately — independent of clipboard success
+  // Toggle highlight immediately - independent of clipboard success
   verseRow.classList.toggle('verse-highlight');
   showCopiedToast(payload.ref);
 
-  const toCopy = `${payload.ref} — "${payload.text}"`;
+  const toCopy = `${payload.ref} - "${payload.text}"`;
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(toCopy).catch(() => fallbackCopy(toCopy));
   } else {
