@@ -647,6 +647,63 @@ footer {
   padding: 0.15rem 0.6rem; border-radius: 20px;
   background: var(--bg-alt); color: var(--text-muted);
 }
+.book-card-free {
+  display: inline-block;
+  font-size: 0.7rem; font-weight: 600;
+  padding: 0.15rem 0.6rem; border-radius: 20px;
+  background: #1B5E2020; color: #1B5E20;
+  margin-left: 0.4rem;
+}
+body.site-dark .book-card-free { background: #2e5a3420; color: #6fcf8a; }
+
+/* ── Free Library banner & page ──────────────────────────────────────────── */
+.free-library-banner {
+  display: flex; align-items: center; gap: 1rem;
+  background: linear-gradient(135deg, #1B5E20, #2e7d32);
+  color: #fff; border-radius: var(--radius);
+  padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+  cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+}
+.free-library-banner:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.free-library-banner-icon { font-size: 1.8rem; }
+.free-library-banner strong { font-family: 'Cinzel', serif; font-size: 1.05rem; }
+.free-library-banner p { font-size: 0.85rem; color: rgba(255,255,255,0.85); margin-top: 0.15rem; }
+.free-library-banner-arrow { margin-left: auto; font-size: 1.4rem; }
+
+.free-library-sources {
+  display: flex; flex-wrap: wrap; gap: 0.6rem;
+  margin-bottom: 2rem;
+}
+.free-library-source-chip {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 0.35rem 0.9rem;
+  font-size: 0.8rem; color: var(--text-muted);
+}
+.free-library-source-chip b { color: var(--accent); font-weight: 700; margin-left: 0.3rem; }
+
+.free-library-list { display: flex; flex-direction: column; gap: 1rem; }
+.free-library-item {
+  display: flex; align-items: center; gap: 1.25rem;
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1.25rem; text-decoration: none; color: var(--text);
+  transition: all 0.2s;
+}
+.free-library-item:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); text-decoration: none; }
+.free-library-item-cover {
+  width: 48px; height: 68px; flex: 0 0 auto; border-radius: 4px; overflow: hidden;
+  background: linear-gradient(135deg, #3d2e0a, #1a1208);
+  display: flex; align-items: center; justify-content: center;
+}
+.free-library-item-cover img { width: 100%; height: 100%; object-fit: cover; }
+.free-library-item-cover .book-card-placeholder { font-size: 1.3rem; }
+.free-library-item-body { flex: 1; min-width: 0; }
+.free-library-item-body h3 { font-family: 'Cinzel', serif; font-size: 1rem; margin-bottom: 0.15rem; }
+.free-library-item-note { color: var(--text-muted); font-size: 0.82rem; margin: 0.25rem 0; }
+.free-library-item-source {
+  display: inline-block; font-size: 0.72rem; font-weight: 600;
+  color: #1B5E20; background: #1B5E2015; padding: 0.1rem 0.55rem; border-radius: 20px;
+}
+body.site-dark .free-library-item-source { color: #6fcf8a; background: #2e5a3420; }
 
 /* ── Book Detail ─────────────────────────────────────────────────────────── */
 .book-detail { max-width: 1000px; }
@@ -684,6 +741,20 @@ footer {
   color: var(--text-muted); font-size: 0.95rem;
   margin-top: 1rem; line-height: 1.7;
 }
+
+/* ── Free PDF box ────────────────────────────────────────────────────────── */
+.free-pdf-box {
+  display: flex; align-items: center; gap: 1rem;
+  background: linear-gradient(135deg, #1B5E20, #2e7d32);
+  color: #fff; border-radius: var(--radius);
+  padding: 1rem 1.25rem; margin-top: 1.25rem;
+  text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;
+}
+.free-pdf-box:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); text-decoration: none; }
+.free-pdf-box-icon { font-size: 1.6rem; }
+.free-pdf-box strong { font-family: 'Cinzel', serif; font-size: 0.98rem; }
+.free-pdf-box p { font-size: 0.82rem; color: rgba(255,255,255,0.85); margin-top: 0.15rem; }
+.free-pdf-box-arrow { margin-left: auto; font-size: 1.3rem; }
 
 /* ── Book Links ──────────────────────────────────────────────────────────── */
 .book-links { margin-top: 1.5rem; }

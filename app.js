@@ -10,6 +10,7 @@ function navigateTo(page, id) {
     case 'thinker':    renderThinker(id); break;
     case 'books':      renderBooks(); break;
     case 'book':       renderBook(id); break;
+    case 'free-library': renderFreeLibrary(); break;
     case 'bible':      renderBible(); break;
     case 'about':      renderAbout(); break;
     default:           renderHome();
@@ -522,6 +523,15 @@ function renderBooks() {
       <h1 class="page-title">Books</h1>
       <p class="page-desc">Essential reading in Christian apologetics - from ancient classics to modern masterworks. Each book links to where you can find it online.</p>
 
+      <div class="free-library-banner" onclick="navigateTo('free-library')">
+        <span class="free-library-banner-icon">&#x1F4D6;</span>
+        <div>
+          <strong>Free Library</strong>
+          <p>${BOOKS.filter(b => b.freePdf).length} public-domain works available to read free, right now - legally, in full.</p>
+        </div>
+        <span class="free-library-banner-arrow">&rarr;</span>
+      </div>
+
       <div class="book-filters">
         <button class="book-filter active" onclick="filterBooks('all', this)">All</button>
         ${categories.map(cat => `<button class="book-filter" onclick="filterBooks('${cat.replace(/'/g, "\\'")}', this)">${cat}</button>`).join('')}
@@ -540,6 +550,7 @@ function renderBooks() {
                 <p class="book-card-author">${b.author}</p>
                 <p class="book-card-year">${b.year}</p>
                 <span class="book-card-cat">${b.category}</span>
+                ${b.freePdf ? `<span class="book-card-free">&#x1F4D6; Free PDF</span>` : ''}
               </div>
             </div>`;
         }).join('')}
@@ -558,6 +569,54 @@ function filterBooks(category, btn) {
       card.style.display = 'none';
     }
   });
+}
+
+// ── Free Library ────────────────────────────────────────────────────────────
+function renderFreeLibrary() {
+  const free = [...BOOKS.filter(b => b.freePdf)].sort((a, b) => a.year - b.year);
+  const sourceCounts = {};
+  free.forEach(b => { sourceCounts[b.freePdf.source] = (sourceCounts[b.freePdf.source] || 0) + 1; });
+
+  setContent(`
+    <section class="section page-top">
+      <div class="breadcrumb">
+        <a href="#" onclick="navigateTo('books')">Books</a> &rsaquo;
+        <span>Free Library</span>
+      </div>
+
+      <h1 class="page-title">Free Library</h1>
+      <p class="page-desc">
+        ${free.length} works on this reading list have entered the public domain and can be read, downloaded, and
+        shared free of charge, in full, with no login and no catch. Every link below points to a legitimate
+        source - Project Gutenberg, the Christian Classics Ethereal Library, or the Internet Archive - never a
+        scraper or piracy site. Nothing here is under copyright; nothing here needed permission to post.
+      </p>
+
+      <div class="free-library-sources">
+        ${Object.entries(sourceCounts).map(([src, n]) => `<span class="free-library-source-chip">${src} <b>${n}</b></span>`).join('')}
+      </div>
+
+      <div class="free-library-list">
+        ${free.map(b => {
+          const t = THINKERS[b.thinkerId];
+          return `
+            <a class="free-library-item" href="${b.freePdf.url}" target="_blank" rel="noopener">
+              <div class="free-library-item-cover">
+                ${b.cover ? `<img src="${b.cover}" alt="${b.title}" onerror="this.parentElement.innerHTML='<div class=\\'book-card-placeholder\\'>${b.title.charAt(0)}</div>'" />` : `<div class="book-card-placeholder">${b.title.charAt(0)}</div>`}
+              </div>
+              <div class="free-library-item-body">
+                <h3>${b.title}</h3>
+                <p class="book-card-author">${b.author}${t ? ` &middot; ${t.years}` : ''} &middot; ${b.year < 0 ? Math.abs(b.year) + ' BC' : b.year}</p>
+                <p class="free-library-item-note">${b.freePdf.note || ''}</p>
+                <span class="free-library-item-source">${b.freePdf.source}</span>
+              </div>
+              <span class="free-pdf-box-arrow">&#x2197;</span>
+            </a>
+          `;
+        }).join('')}
+      </div>
+    </section>
+  `);
 }
 
 // ── Single book ─────────────────────────────────────────────────────────────
@@ -592,6 +651,17 @@ function renderBook(bookId) {
             <p class="book-detail-year">First published: ${b.year}</p>
             <span class="book-card-cat">${b.category}</span>
             <p class="book-detail-desc">${b.description}</p>
+
+            ${b.freePdf ? `
+              <a class="free-pdf-box" href="${b.freePdf.url}" target="_blank" rel="noopener">
+                <span class="free-pdf-box-icon">&#x1F4D6;</span>
+                <div>
+                  <strong>Read free, in full - it's public domain</strong>
+                  <p>Hosted by ${b.freePdf.source}. ${b.freePdf.note || ''}</p>
+                </div>
+                <span class="free-pdf-box-arrow">&#x2197;</span>
+              </a>
+            ` : ''}
 
             <div class="book-links">
               <h3>Find This Book</h3>

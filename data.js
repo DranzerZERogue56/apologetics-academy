@@ -3089,7 +3089,8 @@ const BOOKS = [
     category: "Classical & Scholastic",
     description: "The greatest systematic work of Christian theology and philosophy ever written. Contains the Five Ways, the doctrine of analogy, natural law theory, and a comprehensive treatment of virtually every theological question.",
     isbn: "9780870610691",
-    cover: "https://covers.openlibrary.org/b/isbn/9780870610691-M.jpg"
+    cover: "https://covers.openlibrary.org/b/isbn/9780870610691-M.jpg",
+    freePdf: { url: "https://www.ccel.org/ccel/aquinas/summa.pdf", source: "Christian Classics Ethereal Library", note: "Public domain (Fathers of the English Dominican Province translation), complete." }
   },
   {
     id: "reasonable-faith",
@@ -3122,7 +3123,8 @@ const BOOKS = [
     category: "Literary & Cultural",
     description: "Chesterton's intellectual autobiography, showing how he arrived at Christian orthodoxy through reason, paradox, and a fierce engagement with the modern world. A masterpiece of joyful, witty apologetics.",
     isbn: "9780802801203",
-    cover: "https://covers.openlibrary.org/b/isbn/9780802801203-M.jpg"
+    cover: "https://covers.openlibrary.org/b/isbn/9780802801203-M.jpg",
+    freePdf: { url: "https://www.gutenberg.org/ebooks/130", source: "Project Gutenberg", note: "Public domain." }
   },
   {
     id: "pensees",
@@ -3133,7 +3135,8 @@ const BOOKS = [
     category: "Existential & Cultural",
     description: "Pascal's unfinished masterwork - a collection of fragments for a planned defense of Christianity. Contains the famous Wager, penetrating analysis of the human condition, and the argument from the hidden God.",
     isbn: "9780140446456",
-    cover: "https://covers.openlibrary.org/b/isbn/9780140446456-M.jpg"
+    cover: "https://covers.openlibrary.org/b/isbn/9780140446456-M.jpg",
+    freePdf: { url: "https://www.ccel.org/ccel/pascal/pensees.pdf", source: "Christian Classics Ethereal Library", note: "Public domain (W.F. Trotter translation)." }
   },
   {
     id: "evidence-demands-verdict",
@@ -3199,7 +3202,8 @@ const BOOKS = [
     category: "Patristic & Autobiographical",
     description: "The first great autobiography in Western literature and an apologetic masterpiece. Augustine recounts his journey from Manichaeism and skepticism to Christian faith, weaving profound philosophical arguments about evil, time, memory, and the restless heart.",
     isbn: "9780199537822",
-    cover: "https://covers.openlibrary.org/b/isbn/9780199537822-M.jpg"
+    cover: "https://covers.openlibrary.org/b/isbn/9780199537822-M.jpg",
+    freePdf: { url: "https://www.gutenberg.org/ebooks/3296", source: "Project Gutenberg", note: "Public domain (E.B. Pusey translation)." }
   },
   {
     id: "city-of-god",
@@ -3210,7 +3214,8 @@ const BOOKS = [
     category: "Patristic & Philosophy of History",
     description: "Augustine's monumental work responding to the fall of Rome, offering a Christian philosophy of history that contrasts the 'City of God' with the 'City of Man.' A foundational text for Western civilization.",
     isbn: "9780140448948",
-    cover: "https://covers.openlibrary.org/b/isbn/9780140448948-M.jpg"
+    cover: "https://covers.openlibrary.org/b/isbn/9780140448948-M.jpg",
+    freePdf: { url: "https://www.ccel.org/ccel/schaff/npnf102.pdf", source: "Christian Classics Ethereal Library", note: "Public domain (Nicene and Post-Nicene Fathers series); also includes On Christian Doctrine." }
   },
   {
     id: "proslogion",
@@ -3221,7 +3226,8 @@ const BOOKS = [
     category: "Classical & Medieval",
     description: "Contains the famous ontological argument - the most discussed single argument in the history of philosophy of religion. Anselm reasons from the concept of 'that than which nothing greater can be conceived' to the necessary existence of God.",
     isbn: "9780872205659",
-    cover: "https://covers.openlibrary.org/b/isbn/9780872205659-M.jpg"
+    cover: "https://covers.openlibrary.org/b/isbn/9780872205659-M.jpg",
+    freePdf: { url: "https://www.ccel.org/ccel/anselm/basic_works.pdf", source: "Christian Classics Ethereal Library", note: "Public domain; included in Anselm's Basic Writings alongside Cur Deus Homo." }
   },
   {
     id: "christian-apologetics-geisler",
@@ -3342,7 +3348,8 @@ const BOOKS = [
     category: "Legal & Historical",
     description: "Harvard's greatest evidence scholar applies the rules of legal evidence to the four Gospels and concludes that the apostles' testimony would be believed in any court of law. A classic of legal apologetics.",
     isbn: "9780825427473",
-    cover: "https://covers.openlibrary.org/b/isbn/9780825427473-M.jpg"
+    cover: "https://covers.openlibrary.org/b/isbn/9780825427473-M.jpg",
+    freePdf: { url: "https://www.gutenberg.org/ebooks/34989", source: "Project Gutenberg", note: "Public domain." }
   },
   {
     id: "everlasting-man",
@@ -3353,7 +3360,8 @@ const BOOKS = [
     category: "Literary & Historical",
     description: "Chesterton's sweeping response to H.G. Wells' Outline of History. Argues that the story of humanity and the story of Christ are utterly unique - they cannot be reduced to evolutionary or comparative-religion categories. The book that C.S. Lewis credited with his conversion.",
     isbn: "9780486460369",
-    cover: "https://covers.openlibrary.org/b/isbn/9780486460369-M.jpg"
+    cover: "https://covers.openlibrary.org/b/isbn/9780486460369-M.jpg",
+    freePdf: { url: "https://www.gutenberg.org/ebooks/65688", source: "Project Gutenberg", note: "Public domain (US; published 1925)." }
   },
   {
     id: "apologetics-justification",
@@ -3397,7 +3405,8 @@ const BOOKS = [
     category: "Classical & Design",
     description: "Paley's famous argument from biological design - beginning with the watchmaker analogy and cataloguing the evidence of intelligent contrivance in nature. A landmark in the history of the design argument.",
     isbn: "9780192835888",
-    cover: "https://covers.openlibrary.org/b/isbn/9780192835888-M.jpg"
+    cover: "https://covers.openlibrary.org/b/isbn/9780192835888-M.jpg",
+    freePdf: { url: "https://www.ccel.org/ccel/paley/paleysnatural.html", source: "Christian Classics Ethereal Library", note: "Public domain, with illustrative notes." }
   },
   // ── Montgomery books ──────────────────────────────────────────────────────
   {
@@ -3752,6 +3761,201 @@ const BOOKS = [
     description: "Schaeffer's sweeping survey of Western thought, art, and culture from ancient Rome to the present day, showing how each era's worldview shaped its culture - and how the rejection of Christian truth leads to the loss of meaning, freedom, and human dignity.",
     isbn: "9781581345360",
     cover: "https://covers.openlibrary.org/b/isbn/9781581345360-M.jpg"
+  },
+  {
+    id: "nicomachean-ethics",
+    title: "Nicomachean Ethics",
+    author: "Aristotle",
+    year: -340,
+    thinkerId: "aristotle",
+    category: "Classical & Philosophical",
+    description: "Aristotle's foundational treatise on ethics, virtue, and the good life. Its account of practical wisdom, the mean between extremes, and eudaimonia (flourishing) underlies the classical apologetic tradition's confidence in reason as a guide to truth and goodness.",
+    isbn: "9780140449495",
+    cover: "https://covers.openlibrary.org/b/isbn/9780140449495-M.jpg",
+    freePdf: { url: "https://www.gutenberg.org/ebooks/8438", source: "Project Gutenberg", note: "Public domain (W.D. Ross translation)." }
+  },
+  {
+    id: "metaphysics-aristotle",
+    title: "Metaphysics",
+    author: "Aristotle",
+    year: -350,
+    thinkerId: "aristotle",
+    category: "Classical & Philosophical",
+    description: "Aristotle's inquiry into being, substance, and causation, culminating in the argument for an Unmoved Mover - eternal, immaterial, and pure actuality. The direct ancestor of Aquinas's Five Ways and the whole classical cosmological tradition.",
+    isbn: "9780140446197",
+    cover: "https://covers.openlibrary.org/b/isbn/9780140446197-M.jpg",
+    freePdf: { url: "https://archive.org/details/metaphysicsaris00arisgoog", source: "Internet Archive", note: "Public domain scan (W.D. Ross translation)." }
+  },
+  {
+    id: "truth-christian-religion",
+    title: "The Truth of the Christian Religion",
+    author: "Hugo Grotius",
+    year: 1627,
+    thinkerId: "grotius",
+    category: "Legal & Evidential",
+    description: "Grotius's landmark work of comparative apologetics, written partly while imprisoned in the fortress of Loevestein. Applies legal-evidential reasoning to the claims of Christianity and compares it against paganism, Judaism, and Islam on evidential grounds.",
+    isbn: "9780865975156",
+    cover: "https://covers.openlibrary.org/b/isbn/9780865975156-M.jpg",
+    freePdf: { url: "https://www.ccel.org/ccel/g/grotius/truth/cache/truth.pdf", source: "Christian Classics Ethereal Library", note: "Public domain (John Clarke translation)." }
+  },
+  {
+    id: "cur-deus-homo",
+    title: "Cur Deus Homo (Why God Became Man)",
+    author: "Anselm of Canterbury",
+    year: 1098,
+    thinkerId: "anselm",
+    category: "Classical & Scholastic",
+    description: "Anselm's rigorous account of the atonement: why an infinite offense against an infinitely holy God required satisfaction that only one who is both fully God and fully man could provide. The first systematic rational defense of the Incarnation.",
+    isbn: "9781606800856",
+    cover: "https://covers.openlibrary.org/b/isbn/9781606800856-M.jpg",
+    freePdf: { url: "https://www.ccel.org/ccel/anselm/basic_works.pdf", source: "Christian Classics Ethereal Library", note: "Public domain; included in Anselm's Basic Writings." }
+  },
+  {
+    id: "horae-paulinae",
+    title: "Horae Paulinae",
+    author: "William Paley",
+    year: 1790,
+    thinkerId: "paley",
+    category: "Evidential & Forensic",
+    description: "Paley's pioneering study of 'undesigned coincidences' - the subtle, incidental agreements between Acts and Paul's epistles that no forger would think to fabricate. The direct ancestor of Lydia McGrew's modern revival of the method.",
+    isbn: "9781171489153",
+    cover: "https://covers.openlibrary.org/b/isbn/9781171489153-M.jpg",
+    freePdf: { url: "https://archive.org/details/horaepaulinaeo00pale", source: "Internet Archive", note: "Public domain scan, Princeton Theological Seminary Library copy." }
+  },
+  {
+    id: "on-christian-doctrine",
+    title: "On Christian Doctrine",
+    author: "Augustine",
+    year: 397,
+    thinkerId: "augustine",
+    category: "Patristic & Philosophy of History",
+    description: "Augustine's manual for interpreting Scripture and communicating Christian truth, including his famous defense of using pagan learning ('spoiling the Egyptians') in service of the faith - a foundational text for the relationship between reason and revelation.",
+    isbn: "9780486469188",
+    cover: "https://covers.openlibrary.org/b/isbn/9780486469188-M.jpg",
+    freePdf: { url: "https://www.ccel.org/ccel/a/augustine/doctrine/cache/doctrine.pdf", source: "Christian Classics Ethereal Library", note: "Public domain (J.F. Shaw translation)." }
+  },
+  {
+    id: "summa-contra-gentiles",
+    title: "Summa Contra Gentiles",
+    author: "Thomas Aquinas",
+    year: 1264,
+    thinkerId: "aquinas",
+    category: "Classical & Scholastic",
+    description: "Aquinas's earlier and more explicitly apologetic summa, written (tradition holds) as a missionary handbook for engaging Muslim and Jewish philosophers. Builds the case for God's existence and attributes by reason alone before turning to revealed doctrine.",
+    isbn: "9780268016760",
+    cover: "https://covers.openlibrary.org/b/isbn/9780268016760-M.jpg",
+    freePdf: { url: "https://www.ccel.org/ccel/a/aquinas/gentiles/cache/gentiles.pdf", source: "Christian Classics Ethereal Library", note: "Public domain (Fr. Rickaby's early abridged translation, 'Of God and His Creatures')." }
+  },
+  {
+    id: "heretics",
+    title: "Heretics",
+    author: "G.K. Chesterton",
+    year: 1905,
+    thinkerId: "chesterton",
+    category: "Cultural & Existential",
+    description: "Chesterton's witty demolition of the fashionable philosophies of his day - and the direct precursor to Orthodoxy, which he wrote as this book's positive companion piece after critics asked what he actually believed.",
+    isbn: "9781577997894",
+    cover: "https://covers.openlibrary.org/b/isbn/9781577997894-M.jpg",
+    freePdf: { url: "https://www.gutenberg.org/ebooks/470", source: "Project Gutenberg", note: "Public domain." }
+  },
+  {
+    id: "fine-tuned-universe",
+    title: "A Fine-Tuned Universe",
+    author: "Alister McGrath",
+    year: 2009,
+    thinkerId: "mcgrath",
+    category: "Science & Faith",
+    description: "McGrath's Gifford Lectures, developing his 'resonance' model of natural theology: the fine-tuning of the cosmos does not prove God as a matter of logical necessity, but it fits a theistic universe far better than a naturalistic one.",
+    isbn: "9780664233105",
+    cover: "https://covers.openlibrary.org/b/isbn/9780664233105-M.jpg"
+  },
+  {
+    id: "aquinas-beginners-guide",
+    title: "Aquinas: A Beginner's Guide",
+    author: "Edward Feser",
+    year: 2009,
+    thinkerId: "feser",
+    category: "Classical & Neo-Thomist",
+    description: "Feser's clear, contemporary introduction to Aquinas's metaphysics, natural theology, and philosophy of mind - the best entry point for readers new to the Thomistic tradition this academy draws on so heavily.",
+    isbn: "9781851686902",
+    cover: "https://covers.openlibrary.org/b/isbn/9781851686902-M.jpg"
+  },
+  {
+    id: "seven-days-divide-world",
+    title: "Seven Days That Divide the World",
+    author: "John Lennox",
+    year: 2011,
+    thinkerId: "lennox",
+    category: "Science & Faith",
+    description: "Lennox's careful examination of Genesis 1 in light of modern science, modeling how to hold Scripture and scientific data together without either scientific concordism or dismissive literalism.",
+    isbn: "9780310492177",
+    cover: "https://covers.openlibrary.org/b/isbn/9780310492177-M.jpg"
+  },
+  {
+    id: "against-the-flow",
+    title: "Against the Flow",
+    author: "John Lennox",
+    year: 2015,
+    thinkerId: "lennox",
+    category: "Science & Faith",
+    description: "Lennox's study of the book of Daniel as a model for maintaining faithful, thoughtful conviction in a hostile intellectual culture - part biblical exposition, part apologetic for courage under pressure.",
+    isbn: "9780857216212",
+    cover: "https://covers.openlibrary.org/b/isbn/9780857216212-M.jpg"
+  },
+  {
+    id: "socratic-logic",
+    title: "Socratic Logic",
+    author: "Peter Kreeft",
+    year: 2004,
+    thinkerId: "kreeft",
+    category: "Classical & Philosophical",
+    description: "Kreeft's textbook recovery of Aristotelian logic, taught through Socratic dialogue rather than symbolic notation - the discipline of clear thinking that underwrites every argument in this academy's classical courses.",
+    isbn: "9781890318895",
+    cover: "https://covers.openlibrary.org/b/isbn/9781890318895-M.jpg"
+  },
+  {
+    id: "philosophy-of-tolkien",
+    title: "The Philosophy of Tolkien",
+    author: "Peter Kreeft",
+    year: 2005,
+    thinkerId: "kreeft",
+    category: "Literary & Cultural",
+    description: "Kreeft reads The Lord of the Rings as a work of philosophy - metaphysics, ethics, and theology embodied in narrative rather than argument - and shows how imaginative literature can carry apologetic weight that treatises cannot.",
+    isbn: "9781586170257",
+    cover: "https://covers.openlibrary.org/b/isbn/9781586170257-M.jpg"
+  },
+  {
+    id: "holiness-of-god",
+    title: "The Holiness of God",
+    author: "R.C. Sproul",
+    year: 1985,
+    thinkerId: "sproul",
+    category: "Classical & Reformed",
+    description: "Sproul's classic exposition of God's transcendent holiness, centered on Isaiah's vision in the temple - the biblical foundation for taking sin, judgment, and grace with full seriousness.",
+    isbn: "9780842339650",
+    cover: "https://covers.openlibrary.org/b/isbn/9780842339650-M.jpg"
+  },
+  {
+    id: "more-than-a-carpenter",
+    title: "More Than a Carpenter",
+    author: "Josh McDowell",
+    year: 1977,
+    thinkerId: "mcdowell",
+    category: "Evidential",
+    description: "McDowell's short, punchy distillation of the case for Christ - the trilemma, the resurrection evidence, and fulfilled prophecy - written for readers who want the essential argument without the full weight of Evidence That Demands a Verdict.",
+    isbn: "9781414326276",
+    cover: "https://covers.openlibrary.org/b/isbn/9781414326276-M.jpg"
+  },
+  {
+    id: "weight-of-glory",
+    title: "The Weight of Glory",
+    author: "C.S. Lewis",
+    year: 1949,
+    thinkerId: "lewis",
+    category: "Literary & Cultural",
+    description: "A collection of Lewis's sermons and essays, headlined by the title address on desire, glory, and the 'inconsolable secret' hidden in every human heart - among the most quoted and beloved things Lewis ever wrote.",
+    isbn: "9780060653200",
+    cover: "https://covers.openlibrary.org/b/isbn/9780060653200-M.jpg"
   }
 ];
 
