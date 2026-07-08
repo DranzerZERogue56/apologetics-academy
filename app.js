@@ -234,15 +234,17 @@ function renderLesson(courseId, lessonIdx) {
           </blockquote>
         ` : ''}
 
-        <h2>Topics Covered</h2>
-        <div class="topic-list">
-          ${l.topics.map((topic, i) => `
-            <div class="topic-item">
-              <div class="topic-num">${i + 1}</div>
-              <p>${topic}</p>
-            </div>
-          `).join('')}
-        </div>
+        ${l.topics && l.topics.length ? `
+          <h2>Topics Covered</h2>
+          <div class="topic-list">
+            ${l.topics.map((topic, i) => `
+              <div class="topic-item">
+                <div class="topic-num">${i + 1}</div>
+                <p>${topic}</p>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
 
         <h2>Core Ideas</h2>
         <div class="ideas-grid">
@@ -265,7 +267,7 @@ function renderLesson(courseId, lessonIdx) {
         ${l.exposition ? `
           <h2>Core Teaching</h2>
           <div class="lesson-exposition">
-            ${l.exposition.map(para => `<p>${para}</p>`).join('')}
+            ${(Array.isArray(l.exposition) ? l.exposition : [l.exposition]).map(para => `<p>${para}</p>`).join('')}
           </div>
         ` : ''}
 
